@@ -1,0 +1,14 @@
+<launch>
+  <!-- set /global_example parameter -->  
+  <group ns="move2_camera_ns">
+
+    <param name="send_s1_flag" value="0" />
+    <param name="aubo_back_initial_flag" value="0" />
+    <param name="polishing_over_flag value="0" />
+    <node pkg="aubo_control" type="move2_tcp_smarteye_point.py" name="move2_tcp_smarteye_point" output="screen" >
+    </node>
+    
+  </group>
+  
+</launch>
+

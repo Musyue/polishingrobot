@@ -1,0 +1,8 @@
+rostopic pub /joint_states sensor_msgs/JointState "header:
+  seq: 0
+  stamp: {secs: 0, nsecs: 0}
+  frame_id: ''
+name: [base_joint1, base_joint2, mobilebase_joint, rodclimbing_joint, shoulder_joint, upperArm_joint,foreArm_joint, wrist1_joint, wrist2_joint, wrist3_joint]
+position: [ 0,0,0,0,-0.4185434149628584, -1.675165425825643, 1.850441910709101, -2.818228191521398, 2.035719756329554, -0.028894140103582266]
+velocity: [0]
+effort: [0]"

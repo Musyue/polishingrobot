@@ -1,0 +1,6 @@
+<launch>
+  <param name="judge_self_collision_flag" type="int" value="0"/>
+  <node name="planning_scene" pkg="polishingrobot_onlineplanner" type="polishingrobot_onlineplanner" respawn="false" output="screen">
+  </node>
+  
+</launch>

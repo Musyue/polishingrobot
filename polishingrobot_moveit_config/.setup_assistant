@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: polishingrobot_description
+    relative_path: urdf/polishingrobot_description.urdf
+    xacro_args: ""
+  SRDF:
+    relative_path: config/polishingrobot_description.srdf
+  CONFIG:
+    author_name: zy
+    author_email: zynwpu@hotmail.com
+    generated_timestamp: 1597131492

@@ -1,0 +1,602 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.5.1-0-g916b5db  Build Version: 1.5.7152.31018
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="polishingrobot_description">
+
+  <!-- the robot mobile platform model and climbing mechanism model is shown as follows:
+   -->
+
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="4.8727E-19 1.0828E-34 -0.005"
+        rpy="0 0 0" />
+      <mass
+        value="0.13941" />
+      <inertia
+        ixx="2.2944E-05"
+        ixy="-1.3682E-37"
+        ixz="-5.0116E-22"
+        iyy="2.2944E-05"
+        iyz="8.0548E-39"
+        izz="4.3565E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://polishingrobot_description/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.2 0.2 0.2 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://polishingrobot_description/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="base_link2">
+    <inertial>
+      <origin
+        xyz="4.8727E-19 1.0828E-34 -0.025"
+        rpy="0 0 0" />
+      <mass
+        value="0.13941" />
+      <inertia
+        ixx="2.2944E-05"
+        ixy="-1.3682E-37"
+        ixz="-5.0116E-22"
+        iyy="2.2944E-05"
+        iyz="8.0548E-39"
+        izz="4.3565E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://polishingrobot_description/meshes/base_link2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.2 0.2 0.2 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://polishingrobot_description/meshes/base_link2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="base_joint1"
+    type="prismatic">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="base_link2" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      lower="-100"
+      upper="100"
+      effort="1000"
+      velocity="100" />
+  </joint>
+  <link
+    name="base_link3">
+    <inertial>
+      <origin
+        xyz="4.8727E-19 1.0828E-34 -0.025"
+        rpy="0 0 0" />
+      <mass
+        value="0.13941" />
+      <inertia
+        ixx="2.2944E-05"
+        ixy="-1.3682E-37"
+        ixz="-5.0116E-22"
+        iyy="2.2944E-05"
+        iyz="-5.8552E-39"
+        izz="4.3565E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://polishingrobot_description/meshes/base_link3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.2 0.2 0.2 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://polishingrobot_description/meshes/base_link3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="base_joint2"
+    type="prismatic">
+    <origin
+      xyz="0 0 -0.02"
+      rpy="0 0 0" />
+    <parent
+      link="base_link2" />
+    <child
+      link="base_link3" />
+    <axis
+      xyz="0 -1 0" />
+    <limit
+      lower="-100"
+      upper="100"
+      effort="1000"
+      velocity="100" />
+  </joint>
+  <link
+    name="mobilebase_link">
+    <inertial>
+      <origin
+        xyz="-0.021749 3.0733E-07 0.36152"
+        rpy="0 0 0" />
+      <mass
+        value="4.3" />
+      <inertia
+        ixx="119.78"
+        ixy="9.3864E-05"
+        ixz="9.1559"
+        iyy="5.61"
+        iyz="2.164E-05"
+        izz="0.6" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://polishingrobot_description/meshes/mobilebase_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.83922 0.47059 0.36863 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://polishingrobot_description/meshes/mobilebase_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="mobilebase_joint"
+    type="revolute">
+    <origin
+      xyz="0 0 -0.02"
+      rpy="0 0 0" />
+    <parent
+      link="base_link3" />
+    <child
+      link="mobilebase_link" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-100"
+      upper="100"
+      effort="1000"
+      velocity="1000" />
+  </joint>
+  <link
+    name="rod_link">
+    <inertial>
+      <origin
+        xyz="4.8704E-17 0.41767 0"
+        rpy="0 0 0" />
+      <mass
+        value="28.307" />
+      <inertia
+        ixx="1.7694"
+        ixy="-1.856E-16"
+        ixz="-2.7604E-19"
+        iyy="0.25477"
+        iyz="-6.1801E-19"
+        izz="1.7694" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://polishingrobot_description/meshes/rod_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://polishingrobot_description/meshes/rod_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rod_joint"
+    type="fixed">
+    <origin
+      xyz="0.18 0 0.366"
+      rpy="1.5708 0 -1.5708" />
+    <parent
+      link="mobilebase_link" />
+    <child
+      link="rod_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="rodclimbing_link">
+    <inertial>
+      <origin
+        xyz="3.8619E-19 0 0.54148"
+        rpy="0 0 0" />
+      <mass
+        value="17.203" />
+      <inertia
+        ixx="0.84787"
+        ixy="1.7665E-19"
+        ixz="-1.6639E-18"
+        iyy="0.8479"
+        iyz="9.1535E-17"
+        izz="0.031015" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://polishingrobot_description/meshes/rodclimbing_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.89804 0.91765 0.92941 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://polishingrobot_description/meshes/rodclimbing_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rodclimbing_joint"
+    type="prismatic">
+    <origin
+      xyz="0 0 0"
+      rpy="-1.5708 0 0" />
+    <parent
+      link="rod_link" />
+    <child
+      link="rodclimbing_link" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-100"
+      upper="100"
+      effort="1000"
+      velocity="100" />
+  </joint>
+
+
+  <!-- the robot manipulator model is shown as follows:
+  that is: the minipulator_base_link, shoulder_link, upperArm_Link, foreArm_Link, wrist1_Link,wrist1_Link,wrist1_Link
+   -->
+
+  <link name="manipulator_base_link">
+    <inertial>
+      <origin xyz="-2.7535E-06 0.00054789 0.02299" rpy="0 0 0" />
+      <mass value="1.2345" />
+      <inertia ixx="0.0029215" ixy="2.2046E-07" ixz="-3.4773E-08" iyy="0.0028546" iyz="-7.6362E-06" izz="0.0051176" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://polishingrobot_description/meshes/aubo_i10/base_link.DAE" />
+      </geometry>
+      <material name="">
+        <color rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://polishingrobot_description/meshes/aubo_i10/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="manipulator_base_joint" type="fixed">
+    <origin xyz="0.0 0 0.87" rpy="0.0 0.0 1.5708" />
+    <parent link="rodclimbing_link" />
+    <child link="manipulator_base_link" />
+    <axis xyz="0 0 0" />
+  </joint>
+
+
+  <link name="shoulder_Link">
+    <inertial>
+      <origin xyz="0.00029287 0.14173 0.54281" rpy="0 0 0" />
+      <mass value="10.994" />
+      <inertia ixx="2.2088" ixy="-0.00043922" ixz="-0.0025417" iyy="2.1473" iyz="-0.049088" izz="0.07998" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://polishingrobot_description/meshes/aubo_i10/shoulder_Link.DAE" />
+      </geometry>
+      <material name="">
+        <color rgba="0.89804 0.91765 0.92941 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://polishingrobot_description/meshes/aubo_i10/shoulder_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="shoulder_joint" type="revolute">
+    <origin xyz="0 0 0.1632" rpy="-8.7138E-17 -4.3534E-32 3.1416" />
+    <parent link="manipulator_base_link" />
+    <child link="shoulder_Link" />
+    <axis xyz="0 0 1" />
+    <limit lower="-3.05" upper="3.05" effort="0" velocity="0" />
+  </joint>
+
+
+  <link name="upperArm_Link">
+    <inertial>
+      <origin xyz="0.31908 -3.7071E-06 -0.0042956" rpy="0 0 0" />
+      <mass value="5.3139" />
+      <inertia ixx="0.0095171" ixy="7.2849E-06" ixz="-6.7014E-06" iyy="0.11411" iyz="-1.1529E-06" izz="0.11411" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://polishingrobot_description/meshes/aubo_i10/upperArm_Link.DAE" />
+      </geometry>
+      <material name="">
+        <color rgba="0.89804 0.91765 0.92941 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://polishingrobot_description/meshes/aubo_i10/upperArm_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="upperArm_joint" type="revolute">
+    <origin xyz="0 0.2013 0" rpy="-1.5708 -1.5708 0" />
+    <parent link="shoulder_Link" />
+    <child link="upperArm_Link" />
+    <axis xyz="0 0 1" />
+    <limit lower="-3.05" upper="3.05" effort="0" velocity="0" />
+  </joint>
+
+
+  <link name="foreArm_Link">
+    <inertial>
+      <origin xyz="0.24431 6.6794E-06 0.12549" rpy="0 0 0" />
+      <mass value="3.1022" />
+      <inertia ixx="0.0027288" ixy="-6.2713E-06" ixz="-0.0018082" iyy="0.097825" iyz="3.5731E-07" izz="0.097866" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://polishingrobot_description/meshes/aubo_i10/foreArm_Link.DAE" />
+      </geometry>
+      <material name="">
+        <color rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://polishingrobot_description/meshes/aubo_i10/foreArm_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="foreArm_joint" type="revolute">
+    <origin xyz="0.647 0 0" rpy="3.1416 -4.5954E-17 -8.4328E-17" />
+    <parent link="upperArm_Link" />
+    <child link="foreArm_Link" />
+    <axis xyz="0 0 1" />
+    <limit lower="-3.05" upper="3.05" effort="0" velocity="0" />
+  </joint>
+
+
+  <link name="wrist1_Link">
+    <inertial>
+      <origin xyz="5.2305E-07 0.00026581 -0.0027894" rpy="0 0 0" />
+      <mass value="0.57981" />
+      <inertia ixx="0.00088336" ixy="-6.425E-09" ixz="5.1594E-09" iyy="0.00046118" iyz="-1.0734E-06" izz="0.00085336" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://polishingrobot_description/meshes/aubo_i10/wrist1_Link.DAE" />
+      </geometry>
+      <material name="">
+        <color rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://polishingrobot_description/meshes/aubo_i10/wrist1_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="wrist1_joint" type="revolute">
+    <origin xyz="0.6005 0 0" rpy="-3.1416 -1.4294E-15 1.5708" />
+    <parent link="foreArm_Link" />
+    <child link="wrist1_Link" />
+    <axis xyz="0 0 1" />
+    <limit lower="-3.05" upper="3.05" effort="0" velocity="0" />
+  </joint>
+
+
+  <link name="wrist2_Link">
+    <inertial>
+      <origin xyz="-5.2305E-07 -0.00026581 -0.0027894" rpy="0 0 0" />
+      <mass value="0.57981" />
+      <inertia ixx="0.00088336" ixy="-6.4251E-09" ixz="-5.1594E-09" iyy="0.00046118" iyz="1.0734E-06" izz="0.00085336" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://polishingrobot_description/meshes/aubo_i10/wrist2_Link.DAE" />
+      </geometry>
+      <material name="">
+        <color rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://polishingrobot_description/meshes/aubo_i10/wrist2_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="wrist2_joint" type="revolute">
+    <origin xyz="0 0.1025 0" rpy="-1.5708 -7.0777E-16 -7.4101E-16" />
+    <parent link="wrist1_Link" />
+    <child link="wrist2_Link" />
+    <axis xyz="0 0 1" />
+    <limit lower="-3.05" upper="3.05" effort="0" velocity="0" />
+  </joint>
+
+
+  <link name="wrist3_Link">
+    <inertial>
+      <origin xyz="-2.2127E-09 0.00023722 -0.018629" rpy="0 0 0" />
+      <mass value="0.13669" />
+      <inertia ixx="6.0946E-05" ixy="9.3663E-12" ixz="-1.3841E-12" iyy="5.9501E-05" iyz="1.9944E-07" izz="9.6981E-05" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://polishingrobot_description/meshes/aubo_i10/wrist3_Link.DAE" />
+      </geometry>
+      <material name="">
+        <color rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://polishingrobot_description/meshes/aubo_i10/wrist3_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="wrist3_joint" type="revolute">
+    <origin xyz="0 -0.094 0" rpy="1.5708 0 6.7283E-16" />
+    <parent link="wrist2_Link" />
+    <child link="wrist3_Link" />
+    <axis xyz="0 0 1" />
+    <limit lower="-3.05" upper="3.05" effort="0" velocity="0" />
+  </joint>
+
+
+  <!-- the world frame is shown as follows:
+   -->
+  <link name="map"/>
+  <joint name="world_joint" type="fixed">
+    <parent link="map"/>
+    <child link="base_link"/>
+    <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+  </joint>
+
+  <!-- the end effector is shown as follows:
+   -->
+
+     <link name="endeffector_link">
+    <inertial>
+      <origin xyz="-2.2127E-09 0.00023722 -0.018629" rpy="0 0 0" />
+      <mass value="0.13669" />
+      <inertia ixx="6.0946E-05" ixy="9.3663E-12" ixz="-1.3841E-12" iyy="5.9501E-05" iyz="1.9944E-07" izz="9.6981E-05" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://polishingrobot_description/meshes/polishingendeffector.STL" />
+      </geometry>
+      <material name="">
+        <color rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://polishingrobot_description/meshes/polishingendeffector.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="endeffctor_joint" type="fixed">
+    <origin xyz="0.056 -0.19 0.16" rpy="0 3.1416 0" />
+    <parent link="wrist3_Link" />
+    <child link="endeffector_link" />
+    <axis xyz="0 0 0" />
+  </joint>
+
+
+
+</robot>

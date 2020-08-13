@@ -1,0 +1,20 @@
+controller_list:
+  - name: fake_mobile_platform_controller
+    joints:
+      - base_joint1
+      - base_joint2
+      - mobilebase_joint
+  - name: fake_climbing_mechanism_controller
+    joints:
+      - rodclimbing_joint
+  - name: fake_aubo10_controller
+    joints:
+      - shoulder_joint
+      - upperArm_joint
+      - foreArm_joint
+      - wrist1_joint
+      - wrist2_joint
+      - wrist3_joint
+  - name: fake_endeffctor_controller
+    joints:
+      []

@@ -1,0 +1,4 @@
+03/06/2020 11:16:04,121 [140377824278336] [INFO ] - log4cplus started.
+03/06/2020 11:16:04,121 [140377824278336] [INFO ] - rshd:0---addr:192.168.1.16---port:8899
+03/06/2020 11:16:04,122 [140377824278336] [ERROR] - sdk log: Login service connect server failed.
+03/06/2020 11:16:04,122 [140377824278336] [INFO ] - remove client, rshd=0
