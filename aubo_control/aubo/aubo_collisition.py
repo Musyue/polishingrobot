@@ -113,7 +113,7 @@ class AuboCollisionCheck():
 
             horizon_data.update({i:vertical_data})
         one_wall_data.update({wall_num:horizon_data})
-        print(one_wall_data)
+        # print(one_wall_data)
         return one_wall_data
 
 
@@ -132,19 +132,32 @@ def main():
     Aubo_k=Aubo_kinematics()
     count=0
     
-    # Aub.print_json(Aub.wall_viewpoint_planning(1,10,3,1.5,0.4,1.2,0.54,0.36))
+    one_wall_data=Aub.wall_viewpoint_planning(1,10,3,1.5,0.4,1.2,0.54,0.36)#=Aub.print_json(Aub.wall_viewpoint_planning(1,10,3,1.5,0.4,1.2,0.54,0.36))
+    
     ax = plt.axes(projection='3d')
-    zline = np.linspace(0, 15, 1000)
-    xline = np.sin(zline)
-    yline = np.cos(zline)
-    ax.plot3D(xline, yline, zline, 'gray')
+    if len(one_wall_data[1])!=0:
+        mobile_z_list=[]
+        mobile_y_list=[]
+        mobile_x_list=[]
+        for i in range(len(one_wall_data[1])):
+            for j in range(len(one_wall_data[1][i])/2):
+                print(one_wall_data[1][i][j])
+                mobile_z_list.append(one_wall_data[1][i][j][2])
+                mobile_y_list.append(one_wall_data[1][i][j][1])
+                mobile_x_list.append(one_wall_data[1][i][j][0])
+        zdata = np.array(mobile_z_list)
+        ydata = np.array(mobile_y_list)
+        xdata = np.array(mobile_x_list)
+        ax.scatter3D(xdata, ydata, zdata, c=zdata, cmap='Greens')
+        # ax.plot3D(xline, yline, zline, 'gray')
+        plt.show()
 
-    # 三维散点的数据
-    zdata = 15 * np.random.random(100)
-    xdata = np.sin(zdata) + 0.1 * np.random.randn(100)
-    ydata = np.cos(zdata) + 0.1 * np.random.randn(100)
-    ax.scatter3D(xdata, ydata, zdata, c=zdata, cmap='Greens')
-    k=input("input:")
+    # # 三维散点的数据
+    # zdata = 15 * np.random.random(100)
+    # xdata = np.sin(zdata) + 0.1 * np.random.randn(100)
+    # ydata = np.cos(zdata) + 0.1 * np.random.randn(100)
+    # ax.scatter3D(xdata, ydata, zdata, c=zdata, cmap='Greens')
+    # plt.show()
 
 if __name__ == '__main__':
     main()
