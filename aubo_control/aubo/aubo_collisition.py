@@ -75,7 +75,7 @@ class AuboCollisionCheck():
         for i in listdata:
             dd.append(i*pi/180)
         return dd
-    def wall_viewpoint_planning(self,wall_num,wall_length,wall_width,R_Max_Aubo_Reachability,D_cameara2Base,D_wall2Base,FOV_length,FOV_width):
+    def wall_viewpoint_planning(self,wall_num,wall_length,wall_width,R_Max_Aubo_Reachability,D_wall2Camera,D_wall2Base,FOV_length,FOV_width,arm_base_height):
         last_data={}
         R_opreating=sqrt(R_Max_Aubo_Reachability**2-D_wall2Base**2)
         AB=sqrt(2)*R_opreating
@@ -94,7 +94,7 @@ class AuboCollisionCheck():
         for i in range(mobile_base_num_in_world):
             vertical_data={}
             for j in range(arm_base_num_in_world):
-                mobile_base_l1=[D_wall2Base,0-AB/2*2*i,CD/2+CD/2*2*j]            #in base frame
+                mobile_base_l1=[D_wall2Base,0-AB/2*2*i,arm_base_height]            #in base frame
                 A=[D_wall2Base,0-AB/2*2*i+AB/2,CD/2+CD/2*2*j+AB/2]
                 view_point={}
                 y0=A[1]-AB/view_M*0.5
@@ -104,7 +104,7 @@ class AuboCollisionCheck():
                     y=y0-(AB/view_M)*0.5*2*k
                     for m in range(int(view_N)):
                         z=z0-(AD/view_N)*0.5*2*m
-                        view_point.update({count:[D_cameara2Base,y,z]})
+                        view_point.update({count:[D_wall2Camera,y,z]})
                         count+=1
 
 
@@ -119,7 +119,41 @@ class AuboCollisionCheck():
 
     def print_json(self,data):
         print(json.dumps(data, sort_keys=True, indent=4, separators=(', ', ': '), ensure_ascii=False))
+    def caculate_the_workspace_with_aubo_and_climb(self,wall2base,aubo_the_max_opreating_radius,base2ground,climb_value):
+        """     ^ z
+            A-------B
+            -   -   -
+        y<--------------
+            -   -   -
+            -   -   -
+            D-------C
+        The max rectangle length and width and four corner point coordinate in aubo base frame
+        """
+        R_aubo_opreating_Max=sqrt(aubo_the_max_opreating_radius**2-wall2base**2)
+        The_max_square_len=sqrt(2)*R_aubo_opreating_Max
+        #we can obtatin the lowest z 
+        lowest_z=base2ground-The_max_square_len/2
+        rospy.loginfo("The lowest aubo opreating z aix value is : "+str(lowest_z))
+        #The highest side
+        highest_z=base2ground+The_max_square_len/2+climb_value
+        rospy.loginfo("The hightest aubo opreating z aix value is : "+str(highest_z))
+        The_max_rectangle_len_wid=[The_max_square_len,The_max_square_len+climb_value]
+        rospy.loginfo("The max aubo opreating rectangle length and width is : "+str(The_max_rectangle_len_wid))
 
+        # Aubo_base_coordinate=[0.0,0.0,0.0]
+        # The_aubo_base_projection_to_wall_coordinate=[wall2base,0,0]
+
+        A=[wall2base,The_max_square_len/2,highest_z]
+        B=[wall2base,-The_max_square_len/2,highest_z]
+
+        C=[wall2base,The_max_square_len/2,lowest_z]
+        D=[wall2base,-The_max_square_len/2,lowest_z]
+        rospy.loginfo("The Aubo+climb opreating workspace 3D coordinate value in aubo base frame is show :")
+        rospy.loginfo("A---> "+str(A))
+        rospy.loginfo("B---> "+str(B))
+        rospy.loginfo("C---> "+str(C))
+        rospy.loginfo("D---> "+str(D))
+        return [A,B,C,D,The_max_rectangle_len_wid]
 def main():
     
     ratet=1
@@ -131,33 +165,60 @@ def main():
     q_ref_rad=Aub.deg_to_rad(q_ref)
     Aubo_k=Aubo_kinematics()
     count=0
-    
-    one_wall_data=Aub.wall_viewpoint_planning(1,10,3,1.5,0.4,1.2,0.54,0.36)#=Aub.print_json(Aub.wall_viewpoint_planning(1,10,3,1.5,0.4,1.2,0.54,0.36))
-    
+    rectangle_l=[]
+    rectangle_w=[]
+    rectangle_area=[]
+    for i in np.arange(0,1.5,0.1):
+        res_data=Aub.caculate_the_workspace_with_aubo_and_climb(i,1.5,1.2,0.4)
+        rospy.loginfo("The area show:--->"+str(res_data[4][0]*res_data[4][1]))
+        rectangle_l.append(res_data[4][0])
+        rectangle_w.append(res_data[4][1])
+        rectangle_area.append(res_data[4][0]*res_data[4][1])
     ax = plt.axes(projection='3d')
-    if len(one_wall_data[1])!=0:
-        mobile_z_list=[]
-        mobile_y_list=[]
-        mobile_x_list=[]
-        for i in range(len(one_wall_data[1])):
-            for j in range(len(one_wall_data[1][i])/2):
-                print(one_wall_data[1][i][j])
-                mobile_z_list.append(one_wall_data[1][i][j][2])
-                mobile_y_list.append(one_wall_data[1][i][j][1])
-                mobile_x_list.append(one_wall_data[1][i][j][0])
-        zdata = np.array(mobile_z_list)
-        ydata = np.array(mobile_y_list)
-        xdata = np.array(mobile_x_list)
-        ax.scatter3D(xdata, ydata, zdata, c=zdata, cmap='Greens')
-        # ax.plot3D(xline, yline, zline, 'gray')
-        plt.show()
+    zdata = np.array(rectangle_area)
+    ydata = np.array(rectangle_w)
+    xdata = np.array(rectangle_l)
+    ax.scatter3D(xdata, ydata, zdata, c=zdata, cmap='Blues_r')
+    plt.show()
 
-    # # 三维散点的数据
-    # zdata = 15 * np.random.random(100)
-    # xdata = np.sin(zdata) + 0.1 * np.random.randn(100)
-    # ydata = np.cos(zdata) + 0.1 * np.random.randn(100)
-    # ax.scatter3D(xdata, ydata, zdata, c=zdata, cmap='Greens')
-    # plt.show()
+
+
+
+
+    # one_wall_data=Aub.wall_viewpoint_planning(1,10,3,1.5,0.7,1.1,0.54,0.36,1.2)#=Aub.print_json(Aub.wall_viewpoint_planning(1,10,3,1.5,0.4,1.2,0.54,0.36))
+    
+    # ax = plt.axes(projection='3d')
+    # if len(one_wall_data[1])!=0:
+    #     mobile_z_list=[]
+    #     mobile_y_list=[]
+    #     mobile_x_list=[]
+    #     camera_z_list=[]
+    #     camera_y_list=[]
+    #     camera_x_list=[]
+    #     for i in range(len(one_wall_data[1])):
+    #         for j in range(len(one_wall_data[1][i])/2):
+    #             print(one_wall_data[1][i][j])
+    #             mobile_z_list.append(one_wall_data[1][i][j][2])
+    #             mobile_y_list.append(one_wall_data[1][i][j][1])
+    #             mobile_x_list.append(one_wall_data[1][i][j][0])
+    #         for k in range(len(one_wall_data[1][i])/2):
+    #             for m in range(len(one_wall_data[1][i]["viewgroup"+str(k)])):
+    #                 camera_x_list.append(one_wall_data[1][i]["viewgroup"+str(k)][m][0])
+    #                 camera_y_list.append(one_wall_data[1][i]["viewgroup"+str(k)][m][1])
+    #                 camera_z_list.append(one_wall_data[1][i]["viewgroup"+str(k)][m][2])
+
+    #     zdata = np.array(mobile_z_list)
+    #     ydata = np.array(mobile_y_list)
+    #     xdata = np.array(mobile_x_list)
+    #     ax.scatter3D(xdata, ydata, zdata, c=zdata, cmap='Blues_r')
+
+    #     zdata = np.array(camera_z_list)
+    #     ydata = np.array(camera_y_list)
+    #     xdata = np.array(camera_x_list)
+    #     ax.scatter3D(xdata, ydata, zdata, c=zdata, cmap='gray')
+    #     # ax.plot3D(xline, yline, zline, 'gray')
+    #     plt.show()
+
 
 if __name__ == '__main__':
     main()
