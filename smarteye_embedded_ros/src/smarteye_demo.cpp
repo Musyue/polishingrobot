@@ -72,14 +72,15 @@ int main(int argc,char*argv[])
     		emDemo->emRegisterImageCallback(0, (void*)NULL, OnTestCallBackFun);
     		printf("10 seconds imaging testing, more than 20 times can be used normally,less than 20 please contact:*****\n");
     		emDemo->emSetOutputOnceOrMulti(0, 0);
-    		emDemo->emDevStart(0);
+    		
             emDemo->emGetExposureTime(0,extime);
-            // emDemo->emSetExposureTime(0,12000,2);//12000us 1.1 meter
-            // emDemo->emGetExposureTime(0,extime);
+            emDemo->emSetExposureTime(0,12000,2);//12000us 1.1 meter
+            emDemo->emGetExposureTime(0,extime);
+            emDemo->emDevStart(0);
             std::cout<<"exspore time------>"<<extime<<std::endl;
             while(1)
             {
-                
+                // std::cout<<"exspore time------>"<<extime<<std::endl;
                 usleep(500*1000);
                 if(bflag)
                 {

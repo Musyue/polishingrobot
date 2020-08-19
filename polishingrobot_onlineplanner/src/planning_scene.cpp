@@ -51,9 +51,9 @@ void add_objects( moveit::planning_interface::PlanningSceneInterface& planning_s
   //定义物体方位
   geometry_msgs::Pose pose;
   pose.orientation.w =1.0;
-  pose.position.x = 0;
-  pose.position.y = 0;
-  pose.position.z = 1;
+  pose.position.x = 1.2;
+  pose.position.y = -1.3;
+  pose.position.z = 26.37;
 
   moveit_msgs::CollisionObject obj;
   obj.header.frame_id = "map";

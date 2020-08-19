@@ -28,7 +28,7 @@ width, height = abin.width, abin.height
 nrect = len(packer[0])
 print nrect
 # Second bin first rectangle
-rect = packer[1][0]
+rect = packer[0][0]
 
 # rect is a Rectangle object
 x = rect.x # rectangle bottom-left x coordinate
@@ -37,5 +37,8 @@ w = rect.width
 h = rect.height
 # Full rectangle list
 all_rects = packer.rect_list()
+print all_rects
 for rect in all_rects:
+    # print(rect)
 	b, x, y, w, h, rid = rect
+    
