@@ -1,0 +1,96 @@
+#include "waypointmonitor.h"
+
+#include <unistd.h>
+#include <math.h>
+#include <string.h>
+#include <stdio.h>
+#include <sstream>
+#include <fstream>
+
+#include "util.h"
+
+#define SERVER_HOST "127.0.0.1"
+#define SERVER_PORT 8899
+
+bool WaypointMonitor::S_WaypointEqual=true;
+bool WaypointMonitor::S_IOCurrnetEnable=false;
+
+WaypointMonitor::WaypointMonitor()
+{
+}
+
+void WaypointMonitor::RealTimeWaypointCallback(const aubo_robot_namespace::wayPoint_S *wayPointPtr, void *arg)
+{
+    aubo_robot_namespace::wayPoint_S waypoint = *wayPointPtr;
+
+    static double deviation = 4.0;
+
+    double joint[6] = {5.99778, -32.701310, -146.451564, -24.624954, 90.498087, -2.181067};
+
+    int i =0;
+    for( i=0;i<6;i++){
+        if(fabs(waypoint.jointpos[i]*180.0/3.1415926-joint[i])>deviation){
+            S_WaypointEqual = false;
+            break;
+        }
+    }
+
+    if(i==6){
+        S_WaypointEqual = true;
+        //std::cout<<"路点相等"<<std::endl;
+    }
+}
+
+
+
+void WaypointMonitor::demo()
+{
+    ServiceInterface robotService;
+
+    int ret = aubo_robot_namespace::InterfaceCallSuccCode;
+
+    sleep(30);
+
+    while(true)
+    {
+        /** 接口调用: 登录 ***/
+        ret = robotService.robotServiceLogin(SERVER_HOST, SERVER_PORT, "aubo", "123456");
+        if(ret == aubo_robot_namespace::InterfaceCallSuccCode){
+            std::cerr<<"登录成功."<<std::endl;
+
+            robotService.robotServiceRegisterRealTimeRoadPointCallback(WaypointMonitor::RealTimeWaypointCallback, NULL);
+
+            while(true){
+
+                if(S_WaypointEqual==true && S_IOCurrnetEnable == false){
+
+                    std::cout<<"符合设置IO有效的条件"<<std::endl;
+
+                    ret = robotService.robotServiceSetBoardIOStatus(aubo_robot_namespace::RobotBoardUserDO, "U_DO_03", 1);
+                    if(ret!=aubo_robot_namespace::InterfaceCallSuccCode){
+                        std::cout<<std::endl<<"设置IO有效失败:ret="<<ret<<std::endl;
+                    }
+
+                    S_IOCurrnetEnable = true;
+                }
+
+                if(S_WaypointEqual==false && S_IOCurrnetEnable == true){
+
+                    std::cout<<"符合设置IO无效的条件==="<<std::endl;
+
+                    ret = robotService.robotServiceSetBoardIOStatus(aubo_robot_namespace::RobotBoardUserDO, "U_DO_03", 0);
+                    if(ret!=aubo_robot_namespace::InterfaceCallSuccCode){
+                        std::cout<<std::endl<<"设置IO无效失败:ret="<<ret<<std::endl;
+                    }
+
+                    S_IOCurrnetEnable = false;
+                }
+
+                usleep(10);
+            }
+        }else{
+            std::cerr<<"登录失败."<<std::endl;
+            sleep(1);
+        }
+    }
+}

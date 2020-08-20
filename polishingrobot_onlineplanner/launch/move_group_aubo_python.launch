@@ -1,0 +1,6 @@
+<launch>
+
+  <node name="move_group_python" pkg="polishingrobot_onlineplanner" type="move_group_python.py" respawn="false" output="screen">
+  </node>
+
+</launch>

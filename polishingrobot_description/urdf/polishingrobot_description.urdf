@@ -552,7 +552,7 @@
     <parent link="wrist2_Link" />
     <child link="wrist3_Link" />
     <axis xyz="0 0 1" />
-    <limit lower="-3.05" upper="3.05" effort="0" velocity="0" />
+    <limit lower="-3.05" upper="0.55" effort="0" velocity="0" />
   </joint>
 
 
