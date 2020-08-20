@@ -564,7 +564,14 @@
     <child link="base_link"/>
     <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
   </joint>
-
+  <!-- the world frame is shown as follows:
+   -->
+  <link name="world"/>
+  <joint name="map_joint" type="fixed">
+    <parent link="world"/>
+    <child link="map"/>
+    <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0"/>
+  </joint>
   <!-- the end effector is shown as follows:
    -->
 

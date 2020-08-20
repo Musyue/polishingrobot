@@ -45,7 +45,8 @@
 #include <moveit_msgs/DisplayTrajectory.h>
 #include <moveit_msgs/PlanningScene.h>
 #include <moveit_visual_tools/moveit_visual_tools.h>
-
+#include <moveit_msgs/CollisionObject.h>
+#include <moveit/planning_scene_interface/planning_scene_interface.h>
 #include <boost/scoped_ptr.hpp>
 
 int main(int argc, char** argv)
@@ -76,7 +77,45 @@ int main(int argc, char** argv)
   /* Create a RobotState and JointModelGroup to keep track of the current robot pose and planning group*/
   robot_state::RobotStatePtr robot_state(new robot_state::RobotState(robot_model));
   const robot_state::JointModelGroup* joint_model_group = robot_state->getJointModelGroup(PLANNING_GROUP);
+    // We will use the :planning_scene_interface:`PlanningSceneInterface`
+  // class to add and remove collision objects in our "virtual world" scene
+  moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
+  // Adding/Removing Objects and Attaching/Detaching Objects
+  // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  //
+  // Define a collision object ROS message.
+  moveit_msgs::CollisionObject collision_object;
+  collision_object.header.frame_id = "map";
 
+  // The id of the object is used to identify it.
+  collision_object.id = "box1";
+
+  // Define a box to add to the world.
+  shape_msgs::SolidPrimitive primitive;
+  primitive.type = primitive.BOX;
+  primitive.dimensions.resize(3);
+  primitive.dimensions[0] = 0.4;
+  primitive.dimensions[1] = 0.1;
+  primitive.dimensions[2] = 0.4;
+
+  // Define a pose for the box (specified relative to frame_id)
+  geometry_msgs::Pose box_pose;
+  box_pose.orientation.w = 1.0;
+  box_pose.position.x = 0.4;
+  box_pose.position.y = 0.5;
+  box_pose.position.z = 1.5;
+
+  collision_object.primitives.push_back(primitive);
+  collision_object.primitive_poses.push_back(box_pose);
+  collision_object.operation = collision_object.ADD;
+
+  std::vector<moveit_msgs::CollisionObject> collision_objects;
+  collision_objects.push_back(collision_object);
+
+  // Now, let's add the collision object into the world
+  ROS_INFO_NAMED("tutorial", "Add an object into the world");
+  planning_scene_interface.addCollisionObjects(collision_objects);
+  
   // Using the :moveit_core:`RobotModel`, we can construct a :planning_scene:`PlanningScene`
   // that maintains the state of the world (including the robot).
   planning_scene::PlanningScenePtr planning_scene(new planning_scene::PlanningScene(robot_model));
@@ -126,7 +165,7 @@ int main(int argc, char** argv)
   // The package MoveItVisualTools provides many capabilties for visualizing objects, robots,
   // and trajectories in RViz as well as debugging tools such as step-by-step introspection of a script
   namespace rvt = rviz_visual_tools;
-  moveit_visual_tools::MoveItVisualTools visual_tools("minipulator_base_link");
+  moveit_visual_tools::MoveItVisualTools visual_tools("base_link");
   visual_tools.loadRobotStatePub("/display_robot_state");
   visual_tools.enableBatchPublishing();
   visual_tools.deleteAllMarkers();  // clear all old markers
@@ -156,10 +195,10 @@ int main(int argc, char** argv)
   planning_interface::MotionPlanRequest req;
   planning_interface::MotionPlanResponse res;
   geometry_msgs::PoseStamped pose;
-  pose.header.frame_id = "minipulator_base_link";
+  pose.header.frame_id = "base_link";
   pose.pose.position.x = 0.3;
   pose.pose.position.y = 0.4;
-  pose.pose.position.z = 0.75;
+  pose.pose.position.z = 1.75;
   pose.pose.orientation.w = 1.0;
 
   // A tolerance of 0.01 m is specified in position
@@ -175,10 +214,11 @@ int main(int argc, char** argv)
   // .. _kinematic_constraints:
   //     http://docs.ros.org/indigo/api/moveit_core/html/namespacekinematic__constraints.html#a88becba14be9ced36fefc7980271e132
   moveit_msgs::Constraints pose_goal =
-      kinematic_constraints::constructGoalConstraints("wrist3_Link", pose, tolerance_pose, tolerance_angle);
+      kinematic_constraints::constructGoalConstraints("endeffector_link", pose, tolerance_pose, tolerance_angle);
 
   req.group_name = PLANNING_GROUP;
   req.goal_constraints.push_back(pose_goal);
+
 
   // We now construct a planning context that encapsulate the scene,
   // the request and the response. We call the planner using this
@@ -225,7 +265,7 @@ int main(int argc, char** argv)
   // ^^^^^^^^^^^^^^^^^
   // Now, setup a joint space goal
   robot_state::RobotState goal_state(robot_model);
-  std::vector<double> joint_values = { -1.0, 0.7, 0.7, -1.5, -0.7, 2.0, 0.0 };
+  std::vector<double> joint_values = { 0.0,0.0,0.0,0.0,0.0, 0.0, 0.0, -1.5, -0.7, 0.0 };
   goal_state.setJointGroupPositions(joint_model_group, joint_values);
   moveit_msgs::Constraints joint_goal = kinematic_constraints::constructGoalConstraints(goal_state, joint_model_group);
   req.goal_constraints.clear();
@@ -295,10 +335,10 @@ int main(int argc, char** argv)
 
   pose.pose.position.x = 0.32;
   pose.pose.position.y = -0.25;
-  pose.pose.position.z = 0.65;
+  pose.pose.position.z = 1.65;
   pose.pose.orientation.w = 1.0;
   moveit_msgs::Constraints pose_goal_2 =
-      kinematic_constraints::constructGoalConstraints("wrist3_Link", pose, tolerance_pose, tolerance_angle);
+      kinematic_constraints::constructGoalConstraints("endeffector_link", pose, tolerance_pose, tolerance_angle);
 
   /* Now, let's try to move to this new pose goal*/
   req.goal_constraints.clear();
@@ -307,9 +347,9 @@ int main(int argc, char** argv)
   /* But, let's impose a path constraint on the motion.
      Here, we are asking for the end-effector to stay level*/
   geometry_msgs::QuaternionStamped quaternion;
-  quaternion.header.frame_id = "minipulator_base_link";
+  quaternion.header.frame_id = "base_link";
   quaternion.quaternion.w = 1.0;
-  req.path_constraints = kinematic_constraints::constructGoalConstraints("wrist3_Link", quaternion);
+  req.path_constraints = kinematic_constraints::constructGoalConstraints("endeffector_link", quaternion);
 
   // Imposing path constraints requires the planner to reason in the space of possible positions of the end-effector
   // (the workspace of the robot)

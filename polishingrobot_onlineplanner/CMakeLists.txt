@@ -79,6 +79,8 @@ target_link_libraries(aubo10_collision_detecting ${catkin_LIBRARIES})
 add_executable(motion_planning_aubo src/motion_planning_aubo.cpp)
 target_link_libraries(motion_planning_aubo ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
+add_executable(move_group_aubo src/move_group_aubo.cpp)
+target_link_libraries(move_group_aubo ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 #############
 ## Install ##
 #############
