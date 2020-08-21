@@ -11,8 +11,19 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  message_generation
 )
-
+add_message_files(
+  FILES
+  catersian_vel.msg
+  physical_para.msg
+#   Message1.msg
+#   Message2.msg
+)
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+)
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 

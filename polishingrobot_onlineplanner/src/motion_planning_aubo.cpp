@@ -122,7 +122,7 @@ int main(int argc, char** argv)
 
   // Configure a valid robot state
   planning_scene->getCurrentStateNonConst().setToDefaultValues(joint_model_group, "ready");
-
+  // planning_scene->addCollisionDetector
   // We will now construct a loader to load a planner, by name.
   // Note that we are using the ROS pluginlib library here.
   boost::scoped_ptr<pluginlib::ClassLoader<planning_interface::PlannerManager>> planner_plugin_loader;

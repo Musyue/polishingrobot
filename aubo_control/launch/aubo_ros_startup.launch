@@ -1,0 +1,27 @@
+ 
+<launch>
+  <group ns="renov_up_level">
+    <param name="aubo_ip" value='192.168.1.115'/>
+    <param name="aubo_default_point" value='(0.11047934165124106, 0.3256784384221419, 2.479973240743783, 2.099980155999577, 1.507528141410102, 0.001762782544514273)'/>
+
+    <param name="aubo_start_point" value='(0.11047934165124106, 0.3256784384221419, 2.479973240743783, 2.099980155999577, 1.507528141410102, 0.001762782544514273)'/>
+    <param name="aubo_end_point" value='(0.11047934165124106, 0.3256784384221419, 2.479973240743783, 2.099980155999577, 1.507528141410102, 0.001762782544514273)' /> 
+
+    <param name="joint_maxacc_tuple" value='(0.5,0.5,0.5,0.5,0.5,0.5)'/> 
+    <param name="joint_maxvelc_tuple" value='(0.5,0.5,0.5,0.5,0.5,0.5)'/> 
+    <!-- <param name="joint_maxacc_tuple" value='(2.5, 2.5, 2.5, 2.5, 2.5, 2.5)'/> 
+    <param name="joint_maxvelc_tuple" value='(1.5, 1.5, 1.5, 1.5, 1.5, 1.5)'/>  -->
+    <param name="ee_maxacc" value='0.2'/> 
+    <param name="ee_maxvelc" value='0.1'/>
+    <param name="blend_radius" value='0.05'/> 
+    
+    <param name="last_motion_phase_over_flag" value="0" />
+    <param name="current_motion_phase_start_flag" value="0" />
+    <param name="current_motion_phase_over_flag" value="0" />
+
+    <node pkg="aubo_control" type="aubo_ros_driver.py" name="aubo_ros_driver" output="screen" >
+    </node>
+    <!-- <node pkg="aubo_control" type="aubo_ros_driver_state.py" name="aubo_ros_driver_state" output="screen" >
+    </node> -->
+    </group>
+</launch>

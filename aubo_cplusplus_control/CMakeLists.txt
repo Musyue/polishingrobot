@@ -115,24 +115,24 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-set(AuboRobotSDK_INCLUDE "/data/ros/aubo_ws/src/aubo_cplusplus_control/dependents/robotSDK/inc")
-set(AuboRobotSDK_LIBS_DIR "/data/ros/aubo_ws/src/aubo_cplusplus_control/dependents/robotSDK/lib/linux_x64")
+set(AuboRobotSDK_INCLUDE "/data/ros/yue_ws_test/src/polishingrobot/aubo_cplusplus_control/dependents/robotSDK/inc")
+set(AuboRobotSDK_LIBS_DIR "/data/ros/yue_ws_test/src/polishingrobot/aubo_cplusplus_control/dependents/robotSDK/lib/linux_x64")
 
-set(AuboLibConfig_INCLUDE "/data/ros/aubo_ws/src/aubo_cplusplus_control/dependents/libconfig/linux_x64/inc")
-set(AuboLibConfig_LIBS_DIR "/data/ros/aubo_ws/src/aubo_cplusplus_control/dependents/libconfig/linux_x64/lib")
+set(AuboLibConfig_INCLUDE "/data/ros/yue_ws_test/src/polishingrobot/aubo_cplusplus_control/dependents/libconfig/linux_x64/inc")
+set(AuboLibConfig_LIBS_DIR "/data/ros/yue_ws_test/src/polishingrobot/aubo_cplusplus_control/dependents/libconfig/linux_x64/lib")
 
-# set(Auboprotobuf_INCLUDE "/data/ros/aubo_ws/src/aubo_cplusplus_control/dependents/libconfig/linux_x64/inc")
-set(Auboprotobuf_LIBS "/data/ros/aubo_ws/src/aubo_cplusplus_control/dependents/protobuf/linux-x64/lib/libprotobuf.a")
-
-
-set(AuborobotController_INCLUDE "/data/ros/aubo_ws/src/aubo_cplusplus_control/dependents/robotController/Header")
-set(AuborobotController_LIBS "/data/ros/aubo_ws/src/aubo_cplusplus_control/dependents/robotController/lib-linux64/libour_alg_i5p.a")
-
-set(Aubolog4cplus_INCLUDE "/data/ros/aubo_ws/src/aubo_cplusplus_control/dependents/log4cplus/linux_x64/inc/log4cplus")
-set(Aubolog4cplus_LIBS_DIR "/data/ros/aubo_ws/src/aubo_cplusplus_control/dependents/log4cplus/linux_x64/lib")
+# set(Auboprotobuf_INCLUDE "/data/ros/yue_ws_test/src/polishingrobot/aubo_cplusplus_control/dependents/libconfig/linux_x64/inc")
+set(Auboprotobuf_LIBS "/data/ros/yue_ws_test/src/polishingrobot/aubo_cplusplus_control/dependents/protobuf/linux-x64/lib/libprotobuf.a")
 
 
-# set(AuboTest_INCLUDE "/data/ros/aubo_ws/src/aubo_cplusplus_control/")
+set(AuborobotController_INCLUDE "/data/ros/yue_ws_test/src/polishingrobot/aubo_cplusplus_control/dependents/robotController/Header")
+set(AuborobotController_LIBS "/data/ros/yue_ws_test/src/polishingrobot/aubo_cplusplus_control/dependents/robotController/lib-linux64/libour_alg_i5p.a")
+
+set(Aubolog4cplus_INCLUDE "/data/ros/yue_ws_test/src/polishingrobot/aubo_cplusplus_control/dependents/log4cplus/linux_x64/inc/log4cplus")
+set(Aubolog4cplus_LIBS_DIR "/data/ros/yue_ws_test/src/polishingrobot/aubo_cplusplus_control/dependents/log4cplus/linux_x64/lib")
+
+
+# set(AuboTest_INCLUDE "/data/ros/yue_ws_test/src/polishingrobot/aubo_cplusplus_control/")
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
@@ -151,7 +151,7 @@ target_link_libraries(aubo_main pthread ${catkin_LIBRARIES} auborobotcontroller 
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/aubo_cplusplus_control.cpp
+#   src/${PROJECT_NAME}/polishingrobot/aubo_cplusplus_control.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -162,7 +162,7 @@ target_link_libraries(aubo_main pthread ${catkin_LIBRARIES} auborobotcontroller 
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/aubo_cplusplus_control_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/polishingrobot/aubo_cplusplus_control_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the

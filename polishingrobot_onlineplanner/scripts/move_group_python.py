@@ -60,21 +60,21 @@ class MoveItObstaclesDemo:
         
         # 控制机械臂先回到初始化位置
 
-        target_pose = PoseStamped()
-        target_pose.header.frame_id = reference_frame
-        target_pose.pose.position.x = 0.0
-        target_pose.pose.position.y = 0.0
-        target_pose.pose.position.z = 0.0
-        target_pose.pose.orientation.w = 1.0
+        # target_pose = PoseStamped()
+        # target_pose.header.frame_id = reference_frame
+        # target_pose.pose.position.x = 0.0
+        # target_pose.pose.position.y = 0.0
+        # target_pose.pose.position.z = 0.0
+        # target_pose.pose.orientation.w = 1.0
         
-        # 控制机械臂运动到目标位置
-        arm.set_pose_target(target_pose, end_effector_link)
+        # # 控制机械臂运动到目标位置
+        # arm.set_pose_target(target_pose, end_effector_link)
 
-        arm.go()
-        rospy.sleep(2)
+        # arm.go()
+        # rospy.sleep(2)
         
         # 设置桌面的高度
-        table_ground = 1.5
+        table_ground = 1.4
         
         # 设置table、box1和box2的三维尺寸
         table_size = [0.2, 0.7, 0.01]
@@ -90,26 +90,26 @@ class MoveItObstaclesDemo:
         table_pose.pose.orientation.w = 1.0
         scene.add_box(table_id, table_pose, table_size)
         
-        box1_pose = PoseStamped()
-        box1_pose.header.frame_id = reference_frame
-        box1_pose.pose.position.x = 0.8
-        box1_pose.pose.position.y = -1.5
-        box1_pose.pose.position.z = table_ground + table_size[2] + box1_size[2] / 2.0
-        box1_pose.pose.orientation.w = 1.0   
-        scene.add_box(box1_id, box1_pose, box1_size)
+        # box1_pose = PoseStamped()
+        # box1_pose.header.frame_id = reference_frame
+        # box1_pose.pose.position.x = 0.8
+        # box1_pose.pose.position.y = -1.5
+        # box1_pose.pose.position.z = table_ground + table_size[2] + box1_size[2] / 2.0
+        # box1_pose.pose.orientation.w = 1.0   
+        # scene.add_box(box1_id, box1_pose, box1_size)
         
-        box2_pose = PoseStamped()
-        box2_pose.header.frame_id = reference_frame
-        box2_pose.pose.position.x = 0.8
-        box2_pose.pose.position.y = -0.1
-        box2_pose.pose.position.z = table_ground + table_size[2] + box2_size[2] / 2.0
-        box2_pose.pose.orientation.w = 1.0   
-        scene.add_box(box2_id, box2_pose, box2_size)
+        # box2_pose = PoseStamped()
+        # box2_pose.header.frame_id = reference_frame
+        # box2_pose.pose.position.x = 0.8
+        # box2_pose.pose.position.y = -0.1
+        # box2_pose.pose.position.z = table_ground + table_size[2] + box2_size[2] / 2.0
+        # box2_pose.pose.orientation.w = 1.0   
+        # scene.add_box(box2_id, box2_pose, box2_size)
         
         # 将桌子设置成红色，两个box设置成橙色
         self.setColor(table_id, 0.8, 0, 0, 1.0)
-        self.setColor(box1_id, 0.8, 0.4, 0, 1.0)
-        self.setColor(box2_id, 0.8, 0.4, 0, 1.0)
+        # self.setColor(box1_id, 0.8, 0.4, 0, 1.0)
+        # self.setColor(box2_id, 0.8, 0.4, 0, 1.0)
         
         # 将场景中的颜色设置发布
         self.sendColors()    
@@ -119,7 +119,7 @@ class MoveItObstaclesDemo:
         target_pose.header.frame_id = reference_frame
         target_pose.pose.position.x = 0.8
         target_pose.pose.position.y = -0.7
-        target_pose.pose.position.z = table_pose.pose.position.z + table_size[2] + 0.05
+        target_pose.pose.position.z = 1.5#table_pose.pose.position.z + table_size[2] + 0.05
         target_pose.pose.orientation.w = 1.0
         
         # 控制机械臂运动到目标位置
@@ -127,29 +127,29 @@ class MoveItObstaclesDemo:
         arm.go()
         rospy.sleep(2)
 
-        # 设置机械臂的运动目标位置，进行避障规划
-        target_pose2 = PoseStamped()
-        target_pose2.header.frame_id = reference_frame
-        target_pose2.pose.position.x = 0.8
-        target_pose2.pose.position.y = -0.7
-        target_pose2.pose.position.z = table_pose.pose.position.z + table_size[2] + 0.05
-        target_pose2.pose.orientation.w = 1.0
+        # # 设置机械臂的运动目标位置，进行避障规划
+        # target_pose2 = PoseStamped()
+        # target_pose2.header.frame_id = reference_frame
+        # target_pose2.pose.position.x = 0.8
+        # target_pose2.pose.position.y = -0.7
+        # target_pose2.pose.position.z = 1.5#table_pose.pose.position.z + table_size[2] + 0.05
+        # target_pose2.pose.orientation.w = 1.0
         
-        # 控制机械臂运动到目标位置
-        arm.set_pose_target(target_pose2, end_effector_link)
-        arm.go()
-        rospy.sleep(2)
+        # # 控制机械臂运动到目标位置
+        # arm.set_pose_target(target_pose2, end_effector_link)
+        # arm.go()
+        # rospy.sleep(2)
         
-        target_pose = PoseStamped()
-        target_pose.header.frame_id = reference_frame
-        target_pose.pose.position.x = 0.0
-        target_pose.pose.position.y = 0.0
-        target_pose.pose.position.z = 0.0
-        target_pose.pose.orientation.w = 1.0
+        # target_pose = PoseStamped()
+        # target_pose.header.frame_id = reference_frame
+        # target_pose.pose.position.x = 0.0
+        # target_pose.pose.position.y = 0.0
+        # target_pose.pose.position.z = 0.0
+        # target_pose.pose.orientation.w = 1.0
         
-        # 控制机械臂运动到目标位置
-        arm.set_pose_target(target_pose, end_effector_link)
-        arm.go()
+        # # 控制机械臂运动到目标位置
+        # arm.set_pose_target(target_pose, end_effector_link)
+        # arm.go()
         
         # 关闭并退出moveit
         moveit_commander.roscpp_shutdown()
