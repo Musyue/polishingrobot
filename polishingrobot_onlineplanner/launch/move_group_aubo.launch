@@ -1,5 +1,6 @@
 <launch>
-
+  <param name="planning_over_flag" type="int" value="0"/>
+  <param name="viewpoint_num" type="int" value="0"/>
   <node name="move_group_aubo" pkg="polishingrobot_onlineplanner" type="move_group_aubo" respawn="false" output="screen">
   </node>
 
