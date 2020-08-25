@@ -108,7 +108,7 @@ class Aubo_kinematics():
     def SIGN(self,x):
         return (x > 0) - (x < 0)
     
-    def aubo_forward(self,q):
+    def aubo_forward(self,q): #degree
         q=self.degree_to_rad(q)
         T=[]
         for i in range(16):
@@ -405,8 +405,47 @@ class Aubo_kinematics():
         else:
         
             print("inverse result num is 0")    
+    def GetInverseResult_with_ref(self,T_target,q_ref): #rad
+    
+        num_sols = 0
 
-    def GetInverseResult(self,T_target,q_ref):
+        maxq = 175.0/180.0*pi
+        AngleLimit = [(-maxq,maxq),(-maxq,maxq),(-maxq,maxq),(-maxq,maxq),(-maxq,maxq),(-175.0/180.0*pi,32.0/180.0*pi)]
+
+        #inverse and remove zero list
+        # print(T_target)
+        
+        q_sols_all,num_sols = self.aubo_inverse(T_target)
+        # q_sols_all = self.aubo_inverse(T_target)
+        if(len(q_sols_all) != 0):
+            # for i in q_sols_all:
+                # print("num:"+str(i)+' '+"sols",q_sols_all[i])
+            #remove not in limited data 
+            ret2,q_sols_inlimit = self.selectIK(q_sols_all, AngleLimit)
+            # print "q_sols_inlimit",q_sols_inlimit
+            if((len(q_sols_inlimit) != 0) and (True == ret2)):
+            
+                ret3,q_result = self.chooseIKonRefJoint(q_sols_inlimit, q_ref)
+
+                if(True == ret3):
+                
+                    print(" find solution choose  ")
+                    # print(q_result)
+                    return q_result
+                
+                else:
+                
+                    print(" No solution choose  ")
+            else:
+            
+                print("no valid sols ")
+
+            
+        
+        else:
+        
+            print("inverse result num is 0")
+    def GetInverseResult(self,T_target,q_ref): #rad
     
         num_sols = 0
 
@@ -446,7 +485,7 @@ class Aubo_kinematics():
         else:
         
             print("inverse result num is 0")
-            # return False
+  
         
     def rpy_trans_2_new_T(self,rpyvalue,transvalue):
         """
