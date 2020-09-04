@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+    <include file="$(find base_description)/launch/static_transformation.launch"/>
+    <include file="$(find serial_node)/launch/imu_bringup.launch"/>
+    <include file="$(find sick_tim)/launch/sick_tim551_2050001.launch"/>
+</launch>

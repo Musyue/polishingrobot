@@ -117,7 +117,7 @@ int main(int argc, char **argv)
                 if(open_camera_flag==1)
                 {
                     emDemo->emDevStart(0);
-                    usleep(2000*1000);
+                    usleep(1000*1000);
                     
                     cloud->clear();
                     emDemo->emExchangeParallaxToPointCloudEx(ImgBuffer, ImgBufferGray, emCloud);
@@ -127,7 +127,7 @@ int main(int argc, char **argv)
                     pcl::PassThrough<pcl::PointXYZRGB> pass;
                     pass.setInputCloud (cloud);
                     pass.setFilterFieldName ("z");
-                    pass.setFilterLimits (0.50, 1.100);
+                    pass.setFilterLimits (0.20, 1.300); //
                     pass.filter (*z_filter_cloud);
 
                     pcl::VoxelGrid<pcl::PointXYZRGB> sor1;
@@ -139,31 +139,31 @@ int main(int argc, char **argv)
                     pcl::toROSMsg(*pub_downsample_cloud, output);
                     output.header.frame_id = "smarteye_odom";
                     pcl_pub.publish(output);
-                    // if(save_to_pcd_flag)
-                    // {
-                    //     if(count>=2){
-                    //         ROS_INFO("Start Save\n");
-                    //         std::cout<<"wocao--->:"<<count<<std::endl;
-                    //         std::stringstream sss;
-                    //         sss << "/data/ros/yue_ws/cloud_save_" <<count-1<< ".pcd";
-                    //         writer.write<pcl::PointXYZRGB> (sss.str (), *cloud, false); //*
+                    if(save_to_pcd_flag)
+                    {
+                        if(count>=2){
+                            ROS_INFO("Start Save\n");
+                            std::cout<<"wocao--->:"<<count<<std::endl;
+                            std::stringstream sss;
+                            sss << "/data/cloud_save_" <<count-1<< ".pcd";
+                            writer.write<pcl::PointXYZRGB> (sss.str (), *pub_downsample_cloud, false); //*
 
                             
-                    //         // pcl::io::savePCDFileASCII(save_pcd_name,*cloud);
-                    //         // sleep(30);
-                    //         // ros::param::set("/smarteye_ros_demo/save_to_pcd_flag",0);
-                    //         ROS_INFO("End Save\n");
-                    //     }
-                    // }
+                            // pcl::io::savePCDFileASCII(save_pcd_name,*cloud);
+                            // sleep(30);
+                            // ros::param::set("/smarteye_ros_demo/save_to_pcd_flag",0);
+                            ROS_INFO("End Save\n");
+                        }
+                    }
                     
-                    // if(ros::param::has("/smarteye_ros_demo/smarteye_frame_id"))
-                    // {
-                    //     ros::param::get("/smarteye_ros_demo/smarteye_frame_id",smarteye_frame_id);
-                    //     output.header.frame_id = smarteye_frame_id;
-                    // }else
-                    // {
-                    //     output.header.frame_id = "smarteye_odom";
-                    // }
+                    if(ros::param::has("/smarteye_ros_demo/smarteye_frame_id"))
+                    {
+                        ros::param::get("/smarteye_ros_demo/smarteye_frame_id",smarteye_frame_id);
+                        output.header.frame_id = smarteye_frame_id;
+                    }else
+                    {
+                        output.header.frame_id = "smarteye_odom";
+                    }
                     
                     // viewers.showCloud(cloud);
                     // pcl_pub.publish(output);

@@ -82,8 +82,11 @@ target_link_libraries(motion_planning_aubo ${catkin_LIBRARIES} ${Boost_LIBRARIES
 add_executable(marker_test src/marker_test.cpp)
 target_link_libraries(marker_test ${catkin_LIBRARIES} )
 
-add_executable(move_group_aubo src/move_group_aubo.cpp)
-target_link_libraries(move_group_aubo ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+# add_executable(move_group_aubo src/move_group_aubo.cpp)
+# target_link_libraries(move_group_aubo ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+
+add_executable(move_group_aubo_tutorial src/move_group_aubo_tutorial.cpp)
+target_link_libraries(move_group_aubo_tutorial ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 #############
 ## Install ##
 #############

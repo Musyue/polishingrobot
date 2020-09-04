@@ -220,8 +220,8 @@ link_directories(${SmarteyeAPI_LIBS_DIR})
 add_executable(smarteye_ros_demo src/smarteye_ros_demo.cpp)
 target_link_libraries(smarteye_ros_demo emSmarteyeAPI pthread ${catkin_LIBRARIES} ${PCL_LIBRARIES} ${OpenCV_LIBS})
 
-add_executable(smarteye_ros_detetction_node src/smarteye_ros_detetction_node.cpp)
-target_link_libraries(smarteye_ros_detetction_node emSmarteyeAPI pthread ${catkin_LIBRARIES} ${PCL_LIBRARIES} ${OpenCV_LIBS})
+add_executable(smarteye_ros_detection_node src/smarteye_ros_detection_node.cpp)
+target_link_libraries(smarteye_ros_detection_node emSmarteyeAPI pthread ${catkin_LIBRARIES} ${PCL_LIBRARIES} ${OpenCV_LIBS})
 
 add_executable(smarteye_demo src/smarteye_demo.cpp)
 target_link_libraries(smarteye_demo emSmarteyeAPI pthread ${catkin_LIBRARIES} ${PCL_LIBRARIES} ${OpenCV_LIBS})

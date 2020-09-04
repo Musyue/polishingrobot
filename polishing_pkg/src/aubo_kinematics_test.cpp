@@ -62,30 +62,30 @@ int main(int argc,char **argv)
     o6[0]=sqrt(2)*r_cut/3;
     o6[1]=D_distance;
     o6[2]=sqrt(2)*r_cut/4;
-    // // printf("haha");
+    // printf("haha");
     ros::Rate loop_rate(1);
     VectorXd q(6);
-    q<<6.33,18.66,142.092,120.32,86.375,0.101;
+    q<<0.0,0.0,0.0,0.0,0.0,0.0;
     VectorXd q_result(6);
     deg_to_rad(q_result,q);
     std::cout<<q_result<<std::endl;
     MatrixXd PosIn_Matrix(4,4);
     aubo_forward(PosIn_Matrix,q_result);
     std::cout<<PosIn_Matrix<<std::endl;
-    MatrixXd R(3,3);
-    R(0,0)=PosIn_Matrix(0,0);
-    R(0,1)=PosIn_Matrix(0,1);
-    R(0,2)=PosIn_Matrix(0,2);
-    R(1,0)=PosIn_Matrix(1,0);
-    R(1,1)=PosIn_Matrix(1,1);
-    R(1,2)=PosIn_Matrix(1,2);
-    R(2,0)=PosIn_Matrix(2,0);
-    R(2,1)=PosIn_Matrix(2,1);
-    R(2,2)=PosIn_Matrix(2,2);
-    std::cout<<R<<std::endl;
-    double kk[4];
-    RotMatrixtoQuat(R,kk);
-    std::cout<<kk[0]<<" "<<kk[1]<<" "<<kk[2]<<" "<<kk[3]<<std::endl;
+    // MatrixXd R(3,3);
+    // R(0,0)=PosIn_Matrix(0,0);
+    // R(0,1)=PosIn_Matrix(0,1);
+    // R(0,2)=PosIn_Matrix(0,2);
+    // R(1,0)=PosIn_Matrix(1,0);
+    // R(1,1)=PosIn_Matrix(1,1);
+    // R(1,2)=PosIn_Matrix(1,2);
+    // R(2,0)=PosIn_Matrix(2,0);
+    // R(2,1)=PosIn_Matrix(2,1);
+    // R(2,2)=PosIn_Matrix(2,2);
+    // std::cout<<R<<std::endl;
+    // double kk[4];
+    // RotMatrixtoQuat(R,kk);
+    // std::cout<<kk[0]<<" "<<kk[1]<<" "<<kk[2]<<" "<<kk[3]<<std::endl;
     // MatrixXd T_target(4,4);
     // T_target(0,0) =  -0.991144;
     // T_target(0,1) = -0.0291793;
@@ -130,7 +130,7 @@ int main(int argc,char **argv)
     // std::cout<<std::endl;
     while (ros::ok()){
 
-      std::cout<<count<<std::endl;
+      // std::cout<<count<<std::endl;
       ros::spinOnce();
       loop_rate.sleep();	
       }

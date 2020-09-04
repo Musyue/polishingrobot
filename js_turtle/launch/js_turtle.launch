@@ -1,0 +1,5 @@
+<launch>
+   <node pkg="can_communication" type="can_communication1" name="wheelcontrol" output="screen" />
+   <node pkg="joy" type="joy_node" name="joystick" />
+   <node pkg="js_turtle" type="js_turtle" name="js_turtle" output="screen" />
+</launch>

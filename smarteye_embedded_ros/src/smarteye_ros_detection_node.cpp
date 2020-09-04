@@ -141,26 +141,26 @@ int main(int argc, char **argv)
             // while(1)
             while (ros::ok())
             {
-                if(ros::param::has("/smarteye_ros_demo/open_camera_flag"))
+                if(ros::param::has("/smarteye_ros_detection_node/open_camera_flag"))
                 {
 
-                    ros::param::get("/smarteye_ros_demo/open_camera_flag",open_camera_flag);
+                    ros::param::get("/smarteye_ros_detection_node/open_camera_flag",open_camera_flag);
                 }else
                 {
                     ROS_ERROR("No open_camera_flag parameter,Please check your Launch file\n");
                 }
-                if(ros::param::has("/smarteye_ros_demo/save_to_pcd_flag"))
+                if(ros::param::has("/smarteye_ros_detection_node/save_to_pcd_flag"))
                 {
 
-                    ros::param::get("/smarteye_ros_demo/save_to_pcd_flag",save_to_pcd_flag);
+                    ros::param::get("/smarteye_ros_detection_node/save_to_pcd_flag",save_to_pcd_flag);
                 }else
                 {
                     ROS_ERROR("No save_to_pcd_flag parameter,Please check your Launch file\n");
                 }
-                if(ros::param::has("/smarteye_ros_demo/save_pcd_name"))
+                if(ros::param::has("/smarteye_ros_detection_node/save_pcd_name"))
                 {
 
-                    ros::param::get("/smarteye_ros_demo/save_pcd_name",save_pcd_name);
+                    ros::param::get("/smarteye_ros_detection_node/save_pcd_name",save_pcd_name);
                 }else
                 {
                     ROS_ERROR("No save_pcd_name parameter,Please check your Launch file\n");
@@ -172,46 +172,48 @@ int main(int argc, char **argv)
                     cloud->clear();
                     emDemo->emExchangeParallaxToPointCloudEx(ImgBuffer, ImgBufferGray, emCloud);
                     convert2PCLPointCloud(emCloud, cloud);
-
+                    std::cerr << "PointCloud after cloud has: "<< cloud->points.size () << " data points." << std::endl;
+                    usleep(1000*1000);
                     // pcl::toROSMsg(*cloud, output);
-                    if(save_to_pcd_flag)
-                    {
-                        ROS_INFO("Start Save\n");
-                        pcl::io::savePCDFileASCII(save_pcd_name,*cloud);
-                        // sleep(30);
-                        // ros::param::set("/smarteye_ros_demo/save_to_pcd_flag",0);
-                        ROS_INFO("End Save\n");
-                    }
+                    // if(save_to_pcd_flag)
+                    // {
+                    //     ROS_INFO("Start Save\n");
+                    //     pcl::io::savePCDFileASCII(save_pcd_name,*cloud);
+                    //     // sleep(30);
+                    //     // ros::param::set("/smarteye_ros_detection_node/save_to_pcd_flag",0);
+                    //     ROS_INFO("End Save\n");
+                    // }
                     pcl::PassThrough<pcl::PointXYZRGB> pass;
                     pass.setInputCloud (cloud);
                     pass.setFilterFieldName ("z");
-                    pass.setFilterLimits (0.90, 1.100);
-                    pass.filter (*cloud_filtered_2);
+                    pass.setFilterLimits (0.20, 1.300);
+                    pass.filter (*cloud_filtered);
 
-                    pcl::PassThrough<pcl::PointXYZRGB> passx;
-                    passx.setInputCloud (cloud_filtered_2);
-                    passx.setFilterFieldName ("x");
-                    passx.setFilterLimits (-0.43, 0.43);
-                    passx.filter (*cloud_filtered_3);
+                    // pcl::PassThrough<pcl::PointXYZRGB> passx;
+                    // passx.setInputCloud (cloud_filtered_2);
+                    // passx.setFilterFieldName ("x");
+                    // passx.setFilterLimits (-0.43, 0.43);
+                    // passx.filter (*cloud_filtered_3);
 
-                    pcl::PassThrough<pcl::PointXYZRGB> passy;
-                    passy.setInputCloud (cloud_filtered_3);
-                    passy.setFilterFieldName ("y");
-                    passy.setFilterLimits (-0.22, 0.22);
-                    passy.filter (*cloud_filtered);
+                    // pcl::PassThrough<pcl::PointXYZRGB> passy;
+                    // passy.setInputCloud (cloud_filtered_3);
+                    // passy.setFilterFieldName ("y");
+                    // passy.setFilterLimits (-0.22, 0.22);
+                    // passy.filter (*cloud_filtered);
 
                     std::cerr << "PointCloud after filtering has: "
                             << cloud_filtered->points.size () << " data points." << std::endl;
                     pcl::VoxelGrid<pcl::PointXYZRGB> sor1;
                     sor1.setInputCloud (cloud_filtered);
-                    sor1.setLeafSize (0.003f, 0.003f, 0.003f);
+                    sor1.setLeafSize (0.005f, 0.005f, 0.005f);
                     sor1.filter (*cloud_filtered_1);
                     std::cerr << "PointCloud after VoxelGrid has: "
                             << cloud_filtered_1->points.size () << " data points." << std::endl;
 
                     pcl::toROSMsg(*cloud_filtered_1, downsample_output);
+                    downsample_output.header.frame_id = "smarteye_odom";
                     pcl_pub.publish(downsample_output);
-
+                    usleep(1*1000);
 
                     pcl::PCDWriter writer;
 
@@ -314,10 +316,10 @@ int main(int argc, char **argv)
 
 
                     pcl::RegionGrowing<pcl::PointXYZRGB, pcl::Normal> reg;
-                    reg.setMinClusterSize (50);
+                    reg.setMinClusterSize (10);
                     reg.setMaxClusterSize (1000000);
                     reg.setSearchMethod (tree_extrac);
-                    reg.setNumberOfNeighbours (50);
+                    reg.setNumberOfNeighbours (10);
                     reg.setInputCloud (cloud_filtered_1);
                     //reg.setIndices (indices);
                     reg.setInputNormals (normals_region);
@@ -546,16 +548,17 @@ int main(int argc, char **argv)
                         pub_cloud->height=last_out_cloud->points.size();
 
                         pcl::toROSMsg(*pub_cloud, shortest_path_output);
-                        pcl_pub.publish(shortest_path_output);
-                        shortest_path_output.header.frame_id = "smart_shortest_odom";
+                        shortest_path_output.header.frame_id = "smarteye_odom";
+                        pcl_multipule_pub.publish(shortest_path_output);
+                        
                         auto end = std::chrono::steady_clock::now();
                         std::chrono::duration<double, std::micro> elapsed = end - start;
                         std::cout<< "ALGO --->:time Consuming: "  << elapsed.count()/10000000.0f << " unit(s) " << std::endl;
 
                     }
-                    if(ros::param::has("/smarteye_ros_demo/smarteye_frame_id"))
+                    if(ros::param::has("/smarteye_ros_detection_node/smarteye_frame_id"))
                     {
-                        ros::param::get("/smarteye_ros_demo/smarteye_frame_id",smarteye_frame_id);
+                        ros::param::get("/smarteye_ros_detection_node/smarteye_frame_id",smarteye_frame_id);
                         downsample_output.header.frame_id = smarteye_frame_id;
                     }else
                     {
@@ -566,7 +569,7 @@ int main(int argc, char **argv)
                     // pcl_pub.publish(output);
 
                     emDemo->emDevStop(0);
-                    ros::param::set("/smarteye_ros_demo/open_camera_flag",0);
+                    ros::param::set("/smarteye_ros_detection_node/open_camera_flag",0);
                     
                 }else
                 {

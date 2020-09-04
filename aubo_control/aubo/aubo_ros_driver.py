@@ -1,17 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""
+ROS library
+"""
 import rospy
-import math
-from std_msgs.msg import String,Float64,Bool
+from std_msgs.msg import String
+"""
+Aubo driver
+"""
 from aubo_robotcontrol import *
-from sensor_msgs.msg import JointState
-from geometry_msgs.msg import Pose
-from geometry_msgs.msg import TwistStamped
 
 
+"""
+Math Library
+"""
 import numpy as np
 import time
 import re
+import math
 import os
 class AuboRosDriver():
     def __init__(self):
@@ -212,6 +218,18 @@ def main():
         logger.error("Aubo robot disconnect,Please check!")
     try:
         while not rospy.is_shutdown():
+            emergency_start_aubo=rospy.get_param('emergency_start_aubo')
+            emergency_stop_aubo=rospy.get_param('emergency_stop_aubo')
+            if emergency_start_aubo:
+                rospy.loginfo("Aubo emergency power start!")
+                Aub.AuboStartPower()
+                time.sleep(0.1)
+                rospy.set_param('emergency_start_aubo',0)
+            if emergency_stop_aubo:
+                rospy.loginfo("Aubo emergency power down!")
+                Aub.AuboDownPower()
+                time.sleep(0.1)
+                rospy.set_param('emergency_stop_aubo',0)
             rospy.loginfo("aubo driver 1 is ok")
             rate.sleep()
     except:

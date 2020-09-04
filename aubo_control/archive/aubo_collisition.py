@@ -249,7 +249,7 @@ def main():
     for rect in all_rects:
         # print(rect)
         b, x, y, w, h, rid = rect
-        rect = plt.Rectangle((x, y), w, h,facecolor='w',edgecolor="black",linewidth=1)
+        rect = plt.Rectangle((x, y), w, h,facecolor='y',edgecolor="black",linewidth=1)
         area_sum.append(w*h)
         ax.add_patch(rect)
         

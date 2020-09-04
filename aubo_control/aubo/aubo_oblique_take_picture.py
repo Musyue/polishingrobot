@@ -139,14 +139,33 @@ def main():
     T_max=Aubo_ki.aubo_forward(q_ref_max)
     z_max=T_max[11]
     # print(Aub.caculate_take_pose_in_joint_space(q_ref,z_max,10))
-    q_move_list=Aub.caculate_take_pose_in_joint_space(q_ref,z_max,10)
+    q_move_list=Aub.caculate_take_pose_in_joint_space(q_ref,z_max,5)
+    
     count=0
+    count_jian=len(q_move_list)
+    rospy.logerr("len(q_move_list)"+str(len(q_move_list)))
+    rospy.set_param("/smarteye_ros_demo/save_pcd_name",1)
+    open_once_flag=0
     while not rospy.is_shutdown():
         if len(q_move_list)!=0 and count<len(q_move_list):
-            rospy.loginfo("move_to"+" "+str(q_move_list[count]))
+            if count!=0:
+                os.system("rosparam set /smarteye_ros_demo/open_camera_flag 1")
+                time.sleep(4)
+
+            rospy.loginfo("Num"+" "+str(count)+" "+"move_to"+" "+str(q_move_list[count]))
             Aub.pub_movej.publish("movej"+str(q_ref_rad+q_move_list[count]))
             count+=1
             time.sleep(3)
+            
+        if count>=len(q_move_list) and count_jian>0:
+            if open_once_flag==0:
+                os.system("rosparam set /smarteye_ros_demo/open_camera_flag 1")
+                time.sleep(4)
+                open_once_flag=1
+            count_jian-=1
+            rospy.logerr("move_to_back"+" "+str(q_move_list[count_jian]))
+            Aub.pub_movej.publish("movej"+str(q_ref_rad+q_move_list[count_jian]))
+            time.sleep(2)
         rate.sleep()
 
 if __name__ == '__main__':

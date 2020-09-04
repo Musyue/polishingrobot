@@ -102,31 +102,31 @@ int main (int argc, char** argv)
     
     // pause();
     //set filter
-    pcl::PassThrough<pcl::PointXYZRGB> pass;
-    pass.setInputCloud (cloud);
-    pass.setFilterFieldName ("z");
-    pass.setFilterLimits (0.50, 1.100);
-    pass.filter (*cloud_filtered_2);
+    // pcl::PassThrough<pcl::PointXYZRGB> pass;
+    // pass.setInputCloud (cloud);
+    // pass.setFilterFieldName ("z");
+    // pass.setFilterLimits (0.50, 1.100);
+    // pass.filter (*cloud_filtered_2);
 
-    pcl::PassThrough<pcl::PointXYZRGB> passx;
-    passx.setInputCloud (cloud_filtered_2);
-    passx.setFilterFieldName ("x");
-    // passx.setFilterLimits (-0.43, 0.43);
-    passx.setFilterLimits (-0.40, 0.40);
-    passx.filter (*cloud_filtered_3);
+    // pcl::PassThrough<pcl::PointXYZRGB> passx;
+    // passx.setInputCloud (cloud_filtered_2);
+    // passx.setFilterFieldName ("x");
+    // // passx.setFilterLimits (-0.43, 0.43);
+    // passx.setFilterLimits (-0.40, 0.40);
+    // passx.filter (*cloud_filtered_3);
 
-    pcl::PassThrough<pcl::PointXYZRGB> passy;
-    passy.setInputCloud (cloud_filtered_3);
-    passy.setFilterFieldName ("y");
-    passy.setFilterLimits (-0.20, 0.20);
-    // passy.setFilterLimits (-0.22, 0.22);
-    passy.filter (*cloud_filtered);
+    // pcl::PassThrough<pcl::PointXYZRGB> passy;
+    // passy.setInputCloud (cloud_filtered_3);
+    // passy.setFilterFieldName ("y");
+    // passy.setFilterLimits (-0.20, 0.20);
+    // // passy.setFilterLimits (-0.22, 0.22);
+    // passy.filter (*cloud_filtered);
 
-    std::cerr << "PointCloud after filtering has: "
-            << cloud_filtered->points.size () << " data points." << std::endl;
+    // std::cerr << "PointCloud after filtering has: "
+    //         << cloud_filtered->points.size () << " data points." << std::endl;
     pcl::VoxelGrid<pcl::PointXYZRGB> sor1;
-    sor1.setInputCloud (cloud_filtered);
-    sor1.setLeafSize (0.003f, 0.003f, 0.003f);
+    sor1.setInputCloud (cloud);
+    sor1.setLeafSize (0.005f, 0.005f, 0.005f);
     sor1.filter (*cloud_filtered_1);
     std::cerr << "PointCloud after VoxelGrid has: "
             << cloud_filtered_1->points.size () << " data points." << std::endl;

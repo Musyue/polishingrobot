@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+   <node pkg="joy" type="joy_node" name="joystick" />
+   <node pkg="js_turtle" type="js_turtle" name="js_turtle" />
+ 
+   <param name="odom_freq" type="int"  value="50"/>  
+   <node pkg="can_drive_pkg" type="can_drive_communication" name="wheelcontrol1" output="screen" />
+</launch>

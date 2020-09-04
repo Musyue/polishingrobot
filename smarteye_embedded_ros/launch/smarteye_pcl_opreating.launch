@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+    <node pkg="tf" type="static_transform_publisher" name="world_to_cam"
+          args="0 0 -2.0 0 1.57 0 world smarteye_odom 10" />
+  <!-- Run driver -->
+  <node name="smarteye_ros_detection_node" pkg="smarteye_embedded_ros" type="smarteye_ros_detection_node" output="screen">
+  <param name="open_camera_flag" type="int" value="0"/>
+  <param name="save_to_pcd_flag" type="int" value="0"/>
+  <param name="smarteye_frame_id" type="string" value="smarteye_odom"/>
+  <param name="save_pcd_name" type="string" value="/data/ros/pcd_test.pcd"/>
+  </node>
+
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find smarteye_embedded_ros)/rviz/smart_eye_detection.rviz"/>
+
+</launch>
+

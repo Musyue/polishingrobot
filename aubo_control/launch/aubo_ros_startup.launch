@@ -11,6 +11,7 @@
     <param name="joint_maxvelc_tuple" value='(0.5,0.5,0.5,0.5,0.5,0.5)'/> 
     <!-- <param name="joint_maxacc_tuple" value='(2.5, 2.5, 2.5, 2.5, 2.5, 2.5)'/> 
     <param name="joint_maxvelc_tuple" value='(1.5, 1.5, 1.5, 1.5, 1.5, 1.5)'/>  -->
+    
     <param name="ee_maxacc" value='0.2'/> 
     <param name="ee_maxvelc" value='0.1'/>
     <param name="blend_radius" value='0.05'/> 
@@ -18,6 +19,9 @@
     <param name="last_motion_phase_over_flag" value="0" />
     <param name="current_motion_phase_start_flag" value="0" />
     <param name="current_motion_phase_over_flag" value="0" />
+    <param name="emergency_start_aubo" value="0" />
+
+    <param name="emergency_stop_aubo" value="0" />
 
     <node pkg="aubo_control" type="aubo_ros_driver.py" name="aubo_ros_driver" output="screen" >
     </node>

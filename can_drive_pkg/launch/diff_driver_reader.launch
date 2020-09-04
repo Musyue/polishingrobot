@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+  <node pkg="can_drive_pkg" type="diff_driver_reader_node" name="diff_driver_reader_node" output="screen">
+    <param name="can_config_addr" value="$(find can_drive_pkg)/config/can_config.yaml" />
+    <param name="js_topic" value="base_joint" />
+    <param name="cmd_vel_topic" value="cmd_vel" />
+    <param name="wheel_radius" value="0.09" />
+    <param name="wheel_track" value="0.5" />
+    <param name="encoder_w" value="65536" />
+    <param name="reduc_ratio" value="27.0" />
+    <param name="freq_multiplier" value="4" />
+    <param name="left_motor_sign" value="-1" />
+    <param name="right_motor_sign" value="1" />
+  </node>
+</launch>
