@@ -137,6 +137,7 @@ def main():
     q_ref_rad=Aub.deg_to_rad(q_ref)
     Aubo_ki=Aubo_kinematics()
     T_max=Aubo_ki.aubo_forward(q_ref_max)
+    print("----->",T_max[11])
     z_max=T_max[11]
     # print(Aub.caculate_take_pose_in_joint_space(q_ref,z_max,10))
     q_move_list=Aub.caculate_take_pose_in_joint_space(q_ref,z_max,5)

@@ -149,22 +149,6 @@ int main(int argc, char **argv)
                 {
                     ROS_ERROR("No open_camera_flag parameter,Please check your Launch file\n");
                 }
-                if(ros::param::has("/smarteye_ros_detection_node/save_to_pcd_flag"))
-                {
-
-                    ros::param::get("/smarteye_ros_detection_node/save_to_pcd_flag",save_to_pcd_flag);
-                }else
-                {
-                    ROS_ERROR("No save_to_pcd_flag parameter,Please check your Launch file\n");
-                }
-                if(ros::param::has("/smarteye_ros_detection_node/save_pcd_name"))
-                {
-
-                    ros::param::get("/smarteye_ros_detection_node/save_pcd_name",save_pcd_name);
-                }else
-                {
-                    ROS_ERROR("No save_pcd_name parameter,Please check your Launch file\n");
-                }
                 if(open_camera_flag==1)
                 {
                     emDemo->emDevStart(0);
@@ -292,7 +276,7 @@ int main(int argc, char **argv)
                     // pcl::PointCloud<pcl::Normal>::Ptr cloud_normals (new pcl::PointCloud<pcl::Normal>);
 
                     // // Use all neighbors in a sphere of radius 5cm
-                    // ne.setRadiusSearch (0.1);
+                    // ne.setRadiusSearch (0.1);distance
                     // // ne.setIndices();
                     // // Compute the features
                     // ne.compute (*cloud_normals);
