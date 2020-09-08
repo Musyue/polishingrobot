@@ -281,8 +281,9 @@ class MoveSmartEyeVisonControl():
 
         bTe=self.aubo_my_kienamatics.aubo_forward(jointangular)
         print("bTe",numpy.matrix(bTe).reshape((4,4)))
+        print("bTc",numpy.matrix(self.SmartEye_bTc).reshape((4,4)))
 
-        eTc=numpy.dot(numpy.matrix(self.SmartEye_bTc).reshape((4,4)).I,numpy.matrix(bTe).reshape((4,4)))
+        eTc=numpy.dot(numpy.matrix(bTe).reshape((4,4)).I,numpy.matrix(self.SmartEye_bTc).reshape((4,4)))
         return eTc
 def main():
     

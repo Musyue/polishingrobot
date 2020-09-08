@@ -77,7 +77,7 @@ int main(int argc, char **argv)
     emController *emDemo = new emController();
     
     // pcl::visualization::CloudViewer viewers("Simple Cloud Viewer");
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>),new_pub_cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr pub_downsample_cloud(new pcl::PointCloud<pcl::PointXYZRGB>),z_filter_cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
     PointCloud_EM::Ptr emCloud(new PointCloud_EM());
     emCloud->height = IMG_HEIGHT;
@@ -86,6 +86,7 @@ int main(int argc, char **argv)
 
     std::string eye2hand_config_addr;
     MatrixXd TBC_Matrix(4,4);
+    int count_pub_joint=0;
 
 
     if (emDemo->emScanDevice(true) > EM_STATUS_SUCCESS) 
@@ -96,8 +97,6 @@ int main(int argc, char **argv)
     		ROS_INFO("10 seconds imaging testing, more than 20 times can be used normally,less than 20 please contact:*****\n");
     		emDemo->emSetOutputOnceOrMulti(0, 0);
     		ros::Rate loop_rate(1);
-            // while(1)
-            int count=0;
             pcl::PCDWriter writer;
             while (ros::ok())
             {
@@ -115,16 +114,16 @@ int main(int argc, char **argv)
                     ros::param::get("/smarteye_with_viewpoint/eye2hand_config_addr",eye2hand_config_addr);
                     YAML::Node config = YAML::LoadFile(eye2hand_config_addr);
                     int ServerPort = config["ServerPort"].as<int>();
-                    std::cout<<"ServerPort"<<ServerPort<<std::endl;
+                    // std::cout<<"ServerPort"<<ServerPort<<std::endl;
                     std::vector<float> tbc_16 = config["TBC"].as<std::vector<float>>();
-                    std::vector<float> view_point_joint_deg = config["ViewPointStart"].as<std::vector<float>>();
+                    std::vector<float> StartPoint = config["StartPoint"].as<std::vector<float>>();
                     std::vector<float> ViewPointStart = config["ViewPointStart"].as<std::vector<float>>();
 
                     VectorXd q_deg_start(6);
                     for (size_t i = 0; i < q_deg_start.size(); i++)
                     {
                         /* code */
-                        q_deg_start(i)=view_point_joint_deg[i];
+                        q_deg_start(i)=StartPoint[i];
 
                     }
                     
@@ -133,7 +132,7 @@ int main(int argc, char **argv)
                     deg_to_rad(q_rad_start,q_deg_start);
                     MatrixXd T_q_start(4,4);
                     aubo_forward(T_q_start,q_rad_start);
-                    std::cout<<"wocao--"<<q_rad_start<<std::endl;
+                    // std::cout<<"T_q_start--"<<T_q_start<<std::endl;
                     int count_tbc=0;
                     for (size_t i = 0; i < 4; i++)
                     {
@@ -145,6 +144,11 @@ int main(int argc, char **argv)
                         }
                         
                     }
+                    //step2 caculate TCE
+                    MatrixXd T_C_E(4,4);
+                    T_C_E=T_q_start.inverse()*TBC_Matrix;
+                    // std::cout<<"T_C_E"<<T_C_E<<std::endl;
+                    // std::cout<<"TBC_Matrix"<<TBC_Matrix<<std::endl;
                     double oblique_take_picture_the_max_height=0.0;
 
                     if(ros::param::has("/smarteye_with_viewpoint/oblique_take_picture_the_max_height"))
@@ -154,10 +158,12 @@ int main(int argc, char **argv)
                         int diffrential_num=0.0;
                         float deta_z=0.0;
                         float temp_t23= T_q_start(2,3);
+                        
                         if(ros::param::has("/smarteye_with_viewpoint/diffrential_num"))
                         {
                             ros::param::get("/smarteye_with_viewpoint/diffrential_num",diffrential_num);
                             deta_z=(oblique_take_picture_the_max_height-T_q_start(2,3))/diffrential_num;
+                            MatrixXd q_sol_total(6,diffrential_num);
                             for (size_t i = 0; i < diffrential_num; i++)
                             {
                                 VectorXd q_temp_re(6);
@@ -167,31 +173,107 @@ int main(int argc, char **argv)
                                 bool res=GetInverseResult(T_q_start,q_rad_start,q_temp_re);
                                 if (res)
                                 {
-                                    std::string str1="movej(";
-                                    std::string str2="0.0,0.0,0.0,0.0,0.0,0.0";
-                                    str1.append(str2);
-                                    for (size_t i = 0; i < q_temp_re.size(); i++)
-                                    {
-                                        /* code */
-                                        std::string str3=std::to_string(q_temp_re(i));
-                                        str1.append(",");
-                                        str1.append(str3);
+                                    q_sol_total(0,i) = q_temp_re(0);    q_sol_total(1,i) = q_temp_re(1);
+                                    q_sol_total(2,i) = q_temp_re(2);    q_sol_total(3,i) = q_temp_re(3);
+                                    q_sol_total(4,i) = q_temp_re(4);    q_sol_total(5,i) = q_temp_re(5);
 
-                                    }
-                                    str1.append(")");
-                                    // aubo_control_pub.publish(str1);  
-                                    std::cout<<"q_temp_re:"<<str1<<std::endl;
-                                    std::stringstream write_str;
-                                    std_msgs::String msg;
-                                    
-
-                                    write_str << "movej(" <<"0.0,0.0,0.0,0.0,0.0,0.0"<<q_temp_re<<")";//sss.str ()
-                                    // std::cout<<"q_temp_re:"<<write_str.str()<<std::endl;
-                                    msg.data=str1;//write_str.str();
-                                    aubo_control_pub.publish(msg);
-                                    //std::cout<<"q_temp_re:"<<q_temp_re<<std::endl;
                                 }
                             }
+                            std::cout<<"q_sol_total"<<q_sol_total<<std::endl;
+
+                            if(q_sol_total.cols()!=0){
+                                std::string str1="movej(";
+                                std::string str2="0.0,0.0,0.0,0.0,0.0,0.0";
+                                str1.append(str2);
+                                for (size_t i = 0; i < q_sol_total.rows(); i++)
+                                {
+                                    /* code */
+                                    std::string str3=std::to_string(q_sol_total.col(count_pub_joint)(i));
+                                    str1.append(",");
+                                    str1.append(str3);
+
+                                }
+                                str1.append(")");
+                                std_msgs::String msg;
+                                msg.data=str1;
+                                aubo_control_pub.publish(msg);
+                            }
+                            //step4 get all cloud from camera
+                            if(open_camera_flag==1)
+                            {
+                                emDemo->emDevStart(0);
+                                usleep(1000*1000);
+                                
+                                cloud->clear();
+                                emDemo->emExchangeParallaxToPointCloudEx(ImgBuffer, ImgBufferGray, emCloud);
+                                convert2PCLPointCloud(emCloud, cloud);
+                                // pcl::io::savePCDFileASCII("/data/yue_test.pcd",*cloud);
+                                std::cerr << "PointCloud after cloud has: "<< cloud->points.size () << " data points." << std::endl;
+                                pcl::PassThrough<pcl::PointXYZRGB> pass;
+                                pass.setInputCloud (cloud);
+                                pass.setFilterFieldName ("z");
+                                pass.setFilterLimits (0.20, 1.300); //
+                                pass.filter (*z_filter_cloud);
+
+                                pcl::VoxelGrid<pcl::PointXYZRGB> sor1;
+                                sor1.setInputCloud (z_filter_cloud);
+                                sor1.setLeafSize (0.005f, 0.005f, 0.005f);
+                                sor1.filter (*pub_downsample_cloud);
+                                std::cerr << "PointCloud after VoxelGrid has: "<< pub_downsample_cloud->points.size () << " data points." << std::endl;
+                                //caculate the this point TBC
+                                MatrixXd new_T_B_C(4,4);
+                                MatrixXd T_B_E_temp(4,4);
+                                aubo_forward(T_B_E_temp,q_sol_total.col(count_pub_joint));
+                                new_T_B_C=T_B_E_temp*T_C_E;
+                                // std::cout<<"new_T_B_C---->"<<new_T_B_C<<std::endl;
+
+                                for (size_t i = 0; i <pub_downsample_cloud->points.size(); i++)
+                                {
+                                    MatrixXd cloud_vector_temp_matrix(4,1);
+                                    MatrixXd cloud_vector_new_matrix(4,1);
+                                    cloud_vector_temp_matrix(0,0)=pub_downsample_cloud->points[i].x;
+                                    cloud_vector_temp_matrix(1,0)=pub_downsample_cloud->points[i].y;
+                                    cloud_vector_temp_matrix(2,0)=pub_downsample_cloud->points[i].z;
+                                    cloud_vector_temp_matrix(3,0)=1;
+                                    
+                                    cloud_vector_new_matrix=new_T_B_C*cloud_vector_temp_matrix;
+                                    // std::cout<<"Point"<<" "<<i<<" "<<cloud_vector_new_matrix<<std::endl;
+                                    
+                                    pcl::PointXYZRGB p;
+                                    p.x=cloud_vector_new_matrix(0,0);
+                                    p.y=cloud_vector_new_matrix(1,0);
+                                    p.z=cloud_vector_new_matrix(2,0);
+                                    p.rgb=pub_downsample_cloud->points[i].rgb;
+                                    new_pub_cloud->points.push_back(p);
+                                    /* code */
+                                }
+
+                                pcl::toROSMsg(*new_pub_cloud, output);
+                                output.header.frame_id = "smarteye_odom";
+                                pcl_pub.publish(output);
+
+                                if(ros::param::has("/smarteye_with_viewpoint/smarteye_frame_id"))
+                                {
+                                    ros::param::get("/smarteye_with_viewpoint/smarteye_frame_id",smarteye_frame_id);
+                                    output.header.frame_id = smarteye_frame_id;
+                                }else
+                                {
+                                    output.header.frame_id = "smarteye_odom";
+                                }
+                                
+                                // viewers.showCloud(cloud);
+                                // pcl_pub.publish(output);
+                                emDemo->emDevStop(0);
+                                ros::param::set("/smarteye_with_viewpoint/open_camera_flag",0);
+
+                                count_pub_joint++;
+                            }else
+                            {
+                                ROS_INFO("Please Wait the open parameter!\n");
+                            }
+
+
+
                         }else
                         {
                             ROS_ERROR("No diffrential_num parameter,Please check your Launch file\n");
@@ -206,50 +288,7 @@ int main(int argc, char **argv)
                 {
                     ROS_ERROR("No eye2hand_config_addr parameter,Please check your Launch file\n");
                 }
-                if(open_camera_flag==1)
-                {
-                    emDemo->emDevStart(0);
-                    usleep(1000*1000);
-                    
-                    cloud->clear();
-                    emDemo->emExchangeParallaxToPointCloudEx(ImgBuffer, ImgBufferGray, emCloud);
-                    convert2PCLPointCloud(emCloud, cloud);
-                    // pcl::io::savePCDFileASCII("/data/yue_test.pcd",*cloud);
-                    std::cerr << "PointCloud after cloud has: "<< cloud->points.size () << " data points." << std::endl;
-                    pcl::PassThrough<pcl::PointXYZRGB> pass;
-                    pass.setInputCloud (cloud);
-                    pass.setFilterFieldName ("z");
-                    pass.setFilterLimits (0.20, 1.300); //
-                    pass.filter (*z_filter_cloud);
 
-                    pcl::VoxelGrid<pcl::PointXYZRGB> sor1;
-                    sor1.setInputCloud (z_filter_cloud);
-                    sor1.setLeafSize (0.005f, 0.005f, 0.005f);
-                    sor1.filter (*pub_downsample_cloud);
-                    std::cerr << "PointCloud after VoxelGrid has: "<< pub_downsample_cloud->points.size () << " data points." << std::endl;
-                    
-                    pcl::toROSMsg(*pub_downsample_cloud, output);
-                    output.header.frame_id = "smarteye_odom";
-                    pcl_pub.publish(output);
-
-                    if(ros::param::has("/smarteye_with_viewpoint/smarteye_frame_id"))
-                    {
-                        ros::param::get("/smarteye_with_viewpoint/smarteye_frame_id",smarteye_frame_id);
-                        output.header.frame_id = smarteye_frame_id;
-                    }else
-                    {
-                        output.header.frame_id = "smarteye_odom";
-                    }
-                    
-                    // viewers.showCloud(cloud);
-                    // pcl_pub.publish(output);
-                    emDemo->emDevStop(0);
-                    ros::param::set("/smarteye_with_viewpoint/open_camera_flag",0);
-                    count++;
-                }else
-                {
-                    ROS_INFO("Please Wait the open parameter!\n");
-                }
                 
 
 
@@ -259,7 +298,6 @@ int main(int argc, char **argv)
                 loop_rate.sleep();	
 			    
 			}
-            //while (!viewers.wasStopped()) {}	
         }
         else
             ROS_ERROR("Open failed!\n");

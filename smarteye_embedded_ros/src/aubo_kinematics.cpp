@@ -691,6 +691,7 @@ bool GetInverseResult(const MatrixXd& T_target, const VectorXd& q_ref, VectorXd&
 
     //inverse and remove zero matrixXd
     num_sols = aubo_inverse(q_sols_all, T_target);
+    // std::cout<<q_sols_all.row(0)<<std::endl;
     // for (size_t i = 0; i < 8; i++)
     // {
     //     /* code */

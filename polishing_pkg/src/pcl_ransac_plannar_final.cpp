@@ -296,6 +296,7 @@ int main (int argc, char** argv)
         p.normal_y=cloud_normals_1->points[i].normal_y;
         p.normal_z=cloud_normals_1->points[i].normal_z;
         p.curvature=cloud_normals_1->points[i].curvature;
+        
         cloud_cp->points.push_back(p);
       }
       cloud_cp->width=1;
