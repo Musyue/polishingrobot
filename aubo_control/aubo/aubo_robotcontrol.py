@@ -2254,7 +2254,7 @@ def test(test_count):
                 robot.remove_all_waypoint()
 
                 # 添加全局路点1,用于轨迹运动
-                joint_radian = (-0.000003, -0.127267, -1.321122, 0.376934, -1.570796, -0.000008)
+                joint_radian = (-10.000003, -0.127267, -1.321122, 0.376934, -1.570796, -0.000008)
                 robot.add_waypoint(joint_radian)
 
                 # 添加全局路点2,用于轨迹运动

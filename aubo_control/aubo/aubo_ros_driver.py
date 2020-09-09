@@ -25,6 +25,7 @@ class AuboRosDriver():
         self.robot = Auboi5Robot()
         
         self.aubo_joint_movej_sub = rospy.Subscriber('/aubo_ros_script/movej', String, self.aubo_joint_movej, queue_size=1)
+        self.aubo_joint_movej_sub = rospy.Subscriber('/aubo_ros_script_new/movej', String, self.aubo_joint_new_movej, queue_size=1)
         self.aubo_joint_movel_sub = rospy.Subscriber('/aubo_ros_script/movel', String, self.aubo_joint_movel, queue_size=1)
         self.aubo_joint_movet_sub = rospy.Subscriber('/aubo_ros_script/movet', String, self.aubo_joint_movet, queue_size=1)
 
@@ -36,9 +37,49 @@ class AuboRosDriver():
         self.ee_maxacc=rospy.get_param('/renov_up_level/ee_maxacc')    
         self.ee_maxvelc=rospy.get_param('/renov_up_level/ee_maxvelc')    
         self.blend_radius=rospy.get_param('/renov_up_level/blend_radius')
+        self.move_to_point_temp={}
+        self.move_to_point_count=0
+        
 
     def Init_node(self):
         rospy.init_node("aubo_driver_node1")
+    def aubo_joint_new_movej(self,msg):
+        tuplefloatdata=self.Tuple_string_to_tuple(msg.data)
+        if "movej" in msg.data:
+            #set joint max acc
+            self.robot.set_joint_maxacc(self.Tuple_string_to_tuple(rospy.get_param('/renov_up_level/joint_maxacc_tuple')))
+            #set joint max vel
+            self.robot.set_joint_maxvelc(self.Tuple_string_to_tuple(rospy.get_param('/renov_up_level/joint_maxvelc_tuple')))
+            #set ee max acc
+            self.robot.set_end_max_line_acc(rospy.get_param('/renov_up_level/ee_maxacc'))
+            #set ee max vel
+            self.robot.set_end_max_line_velc(rospy.get_param('/renov_up_level/ee_maxvelc'))
+            #add waypoints
+            rospy.loginfo("movel start point={0}".format(tuplefloatdata[0:6]))
+            rospy.loginfo("movel end point={0}".format(tuplefloatdata[6:]))
+
+            self.move_to_point={"startpoint":tuplefloatdata[0:6],"endpoint":tuplefloatdata[6:]}  
+            self.move_to_point_temp.update({self.move_to_point_count:tuplefloatdata[6:12]})
+            self.move_to_point_count+=1
+            # flag=self.robot.move_joint(tuplefloatdata[6:12])
+            # time.sleep(0.5)
+            # flag=0
+            # print flag
+            # if flag:
+            #     rospy.logerr("movej command work successfully")
+            # else:
+            #     rospy.logerr("movej command doesn't work")
+        else:
+            rospy.logerr("Please send right movej message")
+    def move_aubo_j(self):
+        if self.move_to_point_temp!=None:
+            count=0
+            while(self.robot.move_joint(self.move_to_point_temp[count])!=0):
+                count+=1
+
+
+
+                    
 
     def aubo_joint_movej(self,msg):
         tuplefloatdata=self.Tuple_string_to_tuple(msg.data)
@@ -57,7 +98,9 @@ class AuboRosDriver():
             self.move_to_point={"startpoint":tuplefloatdata[0:6],"endpoint":tuplefloatdata[6:]}
 
             flag=self.robot.move_joint(tuplefloatdata[6:12])
-            # print flag
+            # time.sleep(0.5)
+            # flag=0
+            print("-----flag-----",flag)
             if flag:
                 rospy.logerr("movej command work successfully")
             else:
