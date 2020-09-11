@@ -12,6 +12,6 @@
   </node>
 
   <node pkg="rviz" type="rviz" name="rviz" args="-d $(find smarteye_embedded_ros)/rviz/smart_eye_detection.rviz"/>
-
+  <include file="$(find smarteye_embedded_ros)/launch/smarteye_octomap.launch"/>
 </launch>
 

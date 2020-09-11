@@ -325,9 +325,12 @@ int main(int argc, char **argv)
                                 usleep(1000*1000);
                                 
                                 cloud->clear();
+                                pub_downsample_cloud->clear();
+                                cloud_filtered_1->clear();
+
                                 emDemo->emExchangeParallaxToPointCloudEx(ImgBuffer, ImgBufferGray, emCloud);
                                 convert2PCLPointCloud(emCloud, cloud);
-                                // pcl::io::savePCDFileASCII("/data/yue_test.pcd",*cloud);
+
                                 std::cerr << "PointCloud after cloud has: "<< cloud->points.size () << " data points." << std::endl;
                                 pcl::PassThrough<pcl::PointXYZRGB> pass;
                                 pass.setInputCloud (cloud);
@@ -372,9 +375,10 @@ int main(int argc, char **argv)
                                     }
 
                                     pcl::toROSMsg(*cloud_filtered_1, output);
+                                    usleep(100*1000);
                                     output.header.frame_id = "smarteye_odom";
                                     pcl_pub.publish(output);
-                                    usleep(1*1000);
+                                    
 
                                     pcl::ModelCoefficients::Ptr coefficients(new pcl::ModelCoefficients());
                                     pcl::PointIndices::Ptr inliers(new pcl::PointIndices());  //创建一个PointIndices结构体指针
@@ -732,11 +736,6 @@ int main(int argc, char **argv)
                 {
                     ROS_ERROR("No eye2hand_config_addr parameter,Please check your Launch file\n");
                 }
-
-                
-
-
-                
 
                 ros::spinOnce();
                 loop_rate.sleep();	

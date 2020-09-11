@@ -246,13 +246,13 @@ class MoveSmartEyeVisonControl():
         bTe=numpy.dot(numpy.matrix(bTcp_point).reshape((4,4)),numpy.matrix(eTcp).reshape((4,4)).I)
         
         return self.array_to_list(bTe)
-    def caculate_bTe_from_bTcp_matrix_in_baseframe(self,bTp,eTcp,jointangular):
+    def caculate_bTe_from_bTcp_matrix_in_baseframe(self,bTp,point_data,eTcp,jointangular):
         # bTp=self.Get_bTp_from_SmartEye(point_data)#[4*1]
         # print("bTp",bTp.tolist())
         list_data=bTp#bTp.tolist()
         bTe=self.aubo_my_kienamatics.aubo_forward(jointangular)
 
-        bTcp_point=self.list_change_3_7_11(bTe,[list_data[0],list_data[1],list_data[2]])
+        bTcp_point=self.list_change_3_7_11(bTe,[list_data[0][0],list_data[1][0],list_data[2][0]])
         
         print(bTcp_point)
         bTe=numpy.dot(numpy.matrix(bTcp_point).reshape((4,4)),numpy.matrix(eTcp).reshape((4,4)).I)
@@ -272,7 +272,19 @@ class MoveSmartEyeVisonControl():
         for i in range(len(data_list)):
             temp.append(data_list[i]*180/numpy.pi)
         return temp
-
+    def tcp_connect_with_windows(self,):
+        rospy.logerr("I'm in tcp connecting ")
+        print(self.client_socket_client_addr)
+        client_socket=self.client_socket_client_addr[0]
+        recv_data=client_socket.recv(1024)
+        print(recv_data)
+        return recv_data
+    def send_data_to_client(self,mesdata):
+        self.client_scoket.send("GoGoGo".encode("utf-8"))
+    def close_tcp(self,):
+        self.tcp_socket.close()
+    def close_client_socket(self,):
+        self.client_scoket.close()
     def caculate_eTc_matrix_with_my_kienamatics(self,jointangular):
         """
         jointangular:base on TCP point(deg)
@@ -287,7 +299,7 @@ class MoveSmartEyeVisonControl():
         return eTc
 def main():
     
-    Point_data_1=[1.01443, 0.18598, -0.614259]#[-0.104937,  0.131739, 0.923667]#[0.07149108,-0.1309188,1.040412]#1.033339]#[0.15765,-0.05829,0.9410576]#[-0.239463,-0.0300859,0.983125]#[0.131,-0.242,0.903]#[0.119,-0.116,1.003]
+    Point_data_1=[1.1625,0.340647, -1.19949]#[-0.104937,  0.131739, 0.923667]#[0.07149108,-0.1309188,1.040412]#1.033339]#[0.15765,-0.05829,0.9410576]#[-0.239463,-0.0300859,0.983125]#[0.131,-0.242,0.903]#[0.119,-0.116,1.003]
     ratet=1
     Aub=MoveSmartEyeVisonControl()
     Aub.Init_node()
@@ -308,7 +320,7 @@ def main():
         # Aub.Aubo_Move_to_Point(Robot,StartPoint)
         # Aub.Aubo_forward_kinematics(Robot,StartPoint)
     
-        bTe_p1=Aub.caculate_bTe_from_bTcp_matrix_in_baseframe(Point_data_1+[1.0],eTcp,Aub.yamlDic['StartPoint'])
+        bTe_p1=Aub.caculate_bTe_from_bTcp_matrix_with_my_kienamatics(Point_data_1,eTcp,Aub.yamlDic['StartPoint'])
         print("bTe_p1",bTe_p1)
         joint_p1_in_jointspace=Aub.get_joint_rad_from_inv(bTe_p1,Aub.yamlDic['StartPoint'])
         print(joint_p1_in_jointspace)
@@ -316,7 +328,7 @@ def main():
         print(Robot.forward_kin(Aub.rad_to_degree(joint_p1_in_jointspace)))
         # Aub.tcp_connect_with_windows()
         # print(Aub.yamlDic)
-        # Aub.Aubo_Move_to_Point(Robot,Aub.rad_to_degree(joint_p1_in_jointspace))
+        Aub.Aubo_Move_to_Point(Robot,Aub.rad_to_degree(joint_p1_in_jointspace))
         rate.sleep()
     # except:
     #     pass
