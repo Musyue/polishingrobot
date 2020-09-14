@@ -33,8 +33,8 @@ catkin_package(
 )
 
 
-set(SmarteyeAPI_INCLUDE "/data/ros/yue_ws_test/src/polishingrobot/smarteye_embedded_ros/smart_eye_sdk/include")
-set(SmarteyeAPI_LIBS_DIR "/data/ros/yue_ws_test/src/polishingrobot/smarteye_embedded_ros/smart_eye_sdk/lib")
+set(SmarteyeAPI_INCLUDE "/data/ros/reno_ws/src/polishingrobot/smarteye_embedded_ros/smart_eye_sdk/include")
+set(SmarteyeAPI_LIBS_DIR "/data/ros/reno_ws/src/polishingrobot/smarteye_embedded_ros/smart_eye_sdk/lib")
 include_directories(
 # include
   ${catkin_INCLUDE_DIRS}

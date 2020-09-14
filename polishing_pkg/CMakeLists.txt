@@ -239,9 +239,9 @@ target_link_libraries(tsp_problem ${catkin_LIBRARIES})
 #   include/polishing_pkg/aubo_kinematcs.h
 #   src/aubo_kinematics.cpp
 # )
-add_executable(aubo_kinematics_test src/aubo_kinematics_test.cpp src/aubo_kinematics.cpp)
-add_dependencies(aubo_kinematics_test ${PROJECT_NAME}_gencfg)
-target_link_libraries(aubo_kinematics_test ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+add_executable(aubo_kinematics_test_1 src/aubo_kinematics_test.cpp src/aubo_kinematics.cpp)
+add_dependencies(aubo_kinematics_test_1 ${PROJECT_NAME}_gencfg)
+target_link_libraries(aubo_kinematics_test_1 ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
 add_executable(pointcloud_merge src/pointcloud_merge.cpp)
 target_link_libraries(pointcloud_merge ${catkin_LIBRARIES} ${PCL_LIBRARIES})

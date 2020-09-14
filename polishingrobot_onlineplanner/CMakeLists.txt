@@ -70,11 +70,11 @@ add_executable(polishingrobot_onlineplanner
 )
 target_link_libraries(polishingrobot_onlineplanner ${catkin_LIBRARIES})
 
-add_executable(aubo10_collision_detecting
-  src/aubo10_collision_detecting.cpp
-  src/aubo_kinematics.cpp
-)
-target_link_libraries(aubo10_collision_detecting ${catkin_LIBRARIES})
+# add_executable(aubo10_collision_detecting
+#   src/aubo10_collision_detecting.cpp
+#   src/aubo_kinematics.cpp
+# )
+# target_link_libraries(aubo10_collision_detecting ${catkin_LIBRARIES})
 
 add_executable(motion_planning_aubo src/motion_planning_aubo.cpp)
 target_link_libraries(motion_planning_aubo ${catkin_LIBRARIES} ${Boost_LIBRARIES})

@@ -47,7 +47,7 @@
 			#define emSMARTEYE_API   __attribute__((visibility("default")))
 			#define emSMARTEYE_API_LOCAL __attribute__((visibility("hidden")))
 		#else
-			#warning "===== static library ====="
+			//warning "===== static library ====="
 			#define emSMARTEYE_API
 			#define emSMARTEYE_API_LOCAL
 		#endif
