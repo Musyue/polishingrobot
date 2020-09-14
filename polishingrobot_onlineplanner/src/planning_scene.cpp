@@ -35,7 +35,7 @@ void add_objects( moveit::planning_interface::PlanningSceneInterface& planning_s
 
   Eigen::Vector3d world_size;
   world_size << 1,1,1;
-  shapes::Mesh* load_mesh = shapes::createMeshFromResource("package://polishingrobot_onlineplanner/mesh/20200716_scan_planning_1.stl", world_size);  
+  shapes::Mesh* load_mesh = shapes::createMeshFromResource("package://polishingrobot_onlineplanner/mesh/20200914/20200914_polishingrobot_wall.stl", world_size);  
   if(load_mesh==NULL) 
   {
       ROS_WARN("mesh is NULL !!!");

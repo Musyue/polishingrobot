@@ -126,12 +126,12 @@ int main(int argc, char **argv)
     emController *emDemo = new emController();
     
     // pcl::visualization::CloudViewer viewers("Simple Cloud Viewer");
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>),new_pub_cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr pub_downsample_cloud(new pcl::PointCloud<pcl::PointXYZRGB>),z_filter_cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_0 (new pcl::PointCloud<pcl::PointXYZRGB>),
                                         cloud_filtered (new pcl::PointCloud<pcl::PointXYZRGB>)
                                         ,cloud_filtered_1 (new pcl::PointCloud<pcl::PointXYZRGB>),
-                                        final (new pcl::PointCloud<pcl::PointXYZRGB>),cloud_pub (new pcl::PointCloud<pcl::PointXYZRGB>),cloud_filtered_3 (new pcl::PointCloud<pcl::PointXYZRGB>);
+                                        cloud_pub (new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_p(new pcl::PointCloud<pcl::PointXYZRGB>), cloud_f(new pcl::PointCloud<pcl::PointXYZRGB>);
     PointCloud_EM::Ptr emCloud(new PointCloud_EM());
     emCloud->height = IMG_HEIGHT;
@@ -141,17 +141,20 @@ int main(int argc, char **argv)
     std::string eye2hand_config_addr;
     MatrixXd TBC_Matrix(4,4);
     int count_pub_joint=0;
-    int diffrential_num=0;
+    int front_diffrential_num=0;
+    int oblique_diffrential_num=0;
+    float oblique_viewpoint_the_max_height=0.0;
     int count_back=0;
-    if(ros::param::has("/smarteye_with_viewpoint/diffrential_num"))
+    if(ros::param::has("/smarteye_with_viewpoint/front_diffrential_num"))
     {
-        ros::param::get("/smarteye_with_viewpoint/diffrential_num",diffrential_num);
-        count_back=diffrential_num;
+        ros::param::get("/smarteye_with_viewpoint/front_diffrential_num",front_diffrential_num);
+        count_back=front_diffrential_num;
     }
 
     auto start = std::chrono::steady_clock::now();
     if (emDemo->emScanDevice(true) > EM_STATUS_SUCCESS) 
     {
+        //step 1 open camera device
         if(EM_STATUS_SUCCESS == emDemo->emOpenDevice(m_Device_1, 0, MSQ_KEY, true, false))
         {
     		emDemo->emRegisterImageCallback(0, (void*)NULL, OnTestCallBackFun);
@@ -171,45 +174,46 @@ int main(int argc, char **argv)
                 }
                 if(ros::param::has("/smarteye_with_viewpoint/eye2hand_config_addr"))
                 {
-
+                    //////////////////////////yaml opreating/////////////////////////////////
                     ros::param::get("/smarteye_with_viewpoint/eye2hand_config_addr",eye2hand_config_addr);
                     YAML::Node config = YAML::LoadFile(eye2hand_config_addr);
                     int ServerPort = config["ServerPort"].as<int>();
                     // std::cout<<"ServerPort"<<ServerPort<<std::endl;
                     std::vector<float> tbc_16 = config["TBC"].as<std::vector<float>>();
-                    std::vector<float> StartPoint = config["StartPoint"].as<std::vector<float>>();
-                    std::vector<float> ViewPointStart = config["ViewPointStart"].as<std::vector<float>>();
+                    std::vector<float> CalibrationPoint = config["CalibrationPoint"].as<std::vector<float>>();
+                    std::vector<float> ViewPointLowestPoint = config["ViewPointLowestPoint"].as<std::vector<float>>();
+                    std::vector<float> ViewPointFrontStartPoint = config["ViewPointFrontStartPoint"].as<std::vector<float>>();
 
-                    VectorXd q_deg_start(6);
-                    for (size_t i = 0; i < q_deg_start.size(); i++)
+                    VectorXd q_deg_cali(6);
+                    VectorXd q_deg_view_point_lowest(6);
+                    VectorXd q_deg_view_point_front(6);
+                    for (size_t i = 0; i < q_deg_cali.size(); i++)
                     {
-                        /* code */
-                        q_deg_start(i)=StartPoint[i];
+                        q_deg_cali(i)=CalibrationPoint[i];
+                        q_deg_view_point_lowest(i)=ViewPointLowestPoint[i];
+                        q_deg_view_point_front(i)=ViewPointFrontStartPoint[i];
 
                     }
-                    VectorXd q_deg_view_start(6);
-                    for (size_t i = 0; i < q_deg_view_start.size(); i++)
-                    {
-                        /* code */
-                        q_deg_view_start(i)=ViewPointStart[i];
+                    // deg to rad and caculating forward kinematics
 
-                    }
-                    
+                    VectorXd q_rad_cali(6);
+                    deg_to_rad(q_rad_cali,q_deg_cali);
+                    MatrixXd T_q_cali(4,4);
+                    aubo_forward(T_q_cali,q_rad_cali);
+                    MatrixXd T_view_point_lowest(4,4);
 
-                    VectorXd q_rad_start(6);
-                    deg_to_rad(q_rad_start,q_deg_start);
-                    MatrixXd T_q_start(4,4);
-                    aubo_forward(T_q_start,q_rad_start);
-                    MatrixXd T_view_point_start(4,4);
+                    VectorXd q_rad_view_point_lowest(6);
+                    deg_to_rad(q_rad_view_point_lowest,q_deg_view_point_lowest);                    
+                    aubo_forward(T_view_point_lowest,q_rad_view_point_lowest);
 
-                    VectorXd q_rad_view_start(6);
-                    deg_to_rad(q_rad_view_start,q_deg_view_start);                    
-                    aubo_forward(T_view_point_start,q_rad_view_start);
-                    // std::cout<<"T_q_start--"<<T_q_start<<std::endl;
+                    VectorXd q_rad_view_point_front(6);
+                    MatrixXd T_view_point_front(4,4);
+                    deg_to_rad(q_rad_view_point_front,q_deg_view_point_front);                    
+                    aubo_forward(T_view_point_front,q_rad_view_point_front);
+
                     int count_tbc=0;
                     for (size_t i = 0; i < 4; i++)
                     {
-                        /* code */
                         for (size_t j = 0; j < 4; j++)
                         {
                             TBC_Matrix(i,j)=tbc_16[count_tbc];
@@ -219,33 +223,42 @@ int main(int argc, char **argv)
                     }
                     //step2 caculate TCE
                     MatrixXd T_C_E(4,4);
-                    T_C_E=T_q_start.inverse()*TBC_Matrix;
-                    // std::cout<<"T_C_E"<<T_C_E<<std::endl;
-                    // std::cout<<"TBC_Matrix"<<TBC_Matrix<<std::endl;
-                    double oblique_take_picture_the_max_height=0.0;
+                    T_C_E=T_q_cali.inverse()*TBC_Matrix; //the fixed TCE camera frame from camera to endeffector
 
-                    if(ros::param::has("/smarteye_with_viewpoint/oblique_take_picture_the_max_height"))
+                    double viewpoint_the_max_height=0.0;
+
+                    if(ros::param::has("/smarteye_with_viewpoint/viewpoint_the_max_height"))
                     {
-                        ros::param::get("/smarteye_with_viewpoint/oblique_take_picture_the_max_height",oblique_take_picture_the_max_height);
-                        std::cout<<"oblique_take_picture_the_max_height:"<<oblique_take_picture_the_max_height<<std::endl;
+                        ros::param::get("/smarteye_with_viewpoint/viewpoint_the_max_height",viewpoint_the_max_height);
+                        // std::cout<<"viewpoint_the_max_height:"<<viewpoint_the_max_height<<std::endl;
                         
                         int open_aubo_flag=0;
                         int go_back_initial_flag=0;
-                        float deta_z=0.0;
-                        float temp_t23= T_view_point_start(2,3);
-                        std::cout<<"ros::param::has"<<ros::param::has("/smarteye_with_viewpoint/diffrential_num")<<std::endl;
-                        if(ros::param::has("/smarteye_with_viewpoint/diffrential_num"))
+                        float front_deta_z=0.0;
+                        float oblique_deta_z=0.0;
+                        float temp_T_Z_lowest_point= T_view_point_lowest(2,3);
+                        float temp_T_Z_front_point= T_view_point_front(2,3);
+                        
+                        //we have two oblique viewpoint and others are front view points
+
+                        if(ros::param::has("/smarteye_with_viewpoint/front_diffrential_num") && ros::param::has("/smarteye_with_viewpoint/oblique_diffrential_num") && ros::param::has("/smarteye_with_viewpoint/oblique_viewpoint_the_max_height") )
                         {
-                            ros::param::get("/smarteye_with_viewpoint/diffrential_num",diffrential_num);
-                            deta_z=(oblique_take_picture_the_max_height-T_view_point_start(2,3))/diffrential_num;
-                            MatrixXd q_sol_total(6,diffrential_num+1);
-                            for (size_t i = 0; i <= diffrential_num; i++)
+                            ros::param::get("/smarteye_with_viewpoint/front_diffrential_num",front_diffrential_num);
+                            ros::param::get("/smarteye_with_viewpoint/oblique_diffrential_num",oblique_diffrential_num);
+                            ros::param::get("/smarteye_with_viewpoint/oblique_viewpoint_the_max_height",oblique_viewpoint_the_max_height);
+                            front_deta_z=(viewpoint_the_max_height-T_view_point_front(2,3))/front_diffrential_num;
+                            oblique_deta_z=(oblique_viewpoint_the_max_height-T_view_point_lowest(2,3))/oblique_diffrential_num;
+
+                            MatrixXd q_sol_total(6,front_diffrential_num+oblique_diffrential_num+2);// here add the start point so we need to add 2
+
+
+                            for (size_t i = 0; i <= oblique_diffrential_num+1; i++)
                             {
                                 VectorXd q_temp_re(6);
-                                // std::cout<<T_q_start(2,3)<<std::endl;
-                                T_view_point_start(2,3)=temp_t23+deta_z*i;
-                                // std::cout<<" T_view_point_start(2,3)"<< T_view_point_start(2,3)<<std::endl;
-                                bool res=GetInverseResult(T_view_point_start,q_rad_view_start,q_temp_re);
+                                // std::cout<<T_q_cali(2,3)<<std::endl;
+                                T_view_point_lowest(2,3)=temp_T_Z_lowest_point+oblique_deta_z*i;
+                                // std::cout<<" T_view_point_lowest(2,3)"<< T_view_point_lowest(2,3)<<std::endl;
+                                bool res=GetInverseResult(T_view_point_lowest,q_rad_view_point_lowest,q_temp_re);
                                 if (res)
                                 {
                                     q_sol_total(0,i) = q_temp_re(0);    q_sol_total(1,i) = q_temp_re(1);
@@ -254,6 +267,22 @@ int main(int argc, char **argv)
 
                                 }
                             }
+                            for (size_t i = 3; i <= front_diffrential_num+oblique_diffrential_num+1; i++)
+                            {
+                                VectorXd q_temp_re(6);
+                                // std::cout<<T_q_cali(2,3)<<std::endl;
+                                T_view_point_front(2,3)=temp_T_Z_front_point+front_deta_z*i;
+                                // std::cout<<" T_view_point_lowest(2,3)"<< T_view_point_lowest(2,3)<<std::endl;
+                                bool res=GetInverseResult(T_view_point_front,q_rad_view_point_front,q_temp_re);
+                                if (res)
+                                {
+                                    q_sol_total(0,i) = q_temp_re(0);    q_sol_total(1,i) = q_temp_re(1);
+                                    q_sol_total(2,i) = q_temp_re(2);    q_sol_total(3,i) = q_temp_re(3);
+                                    q_sol_total(4,i) = q_temp_re(4);    q_sol_total(5,i) = q_temp_re(5);
+
+                                }
+                            }
+
                             std::cout<<"q_sol_total"<<q_sol_total<<"-----"<<q_sol_total.cols()<<std::endl;
                             
                             if(ros::param::has("/smarteye_with_viewpoint/go_back_initial_flag"))
@@ -281,7 +310,7 @@ int main(int argc, char **argv)
                                     if(count_back==0)
                                     {
                                         ros::param::set("/smarteye_with_viewpoint/go_back_initial_flag",0);
-                                        count_back=diffrential_num+1;
+                                        count_back=front_diffrential_num+oblique_diffrential_num+1;
                                     }
                                      count_back--;
                                 }
@@ -567,12 +596,6 @@ int main(int argc, char **argv)
                                         sort_cloud->width=1;
                                         sort_cloud->height=cloud_cp->points.size();
 
-                                        //IO 
-                                        // std::stringstream ssss;
-                                        // ssss << "sort_cloud_" << i << ".pcd";
-                                        // writer.write<pcl::PointXYZINormal> (ssss.str (), *sort_cloud, false); //*
-
-                                        //
                                         std::cout<<" This cluster The Highest Point->"<<sort_cloud->points[cloud_cp->points.size()-1].x<< " "
                                         <<sort_cloud->points[cloud_cp->points.size()-1].y<< " "
                                         <<sort_cloud->points[cloud_cp->points.size()-1].z<< " Z distance >>"

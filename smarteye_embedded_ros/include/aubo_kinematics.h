@@ -1,5 +1,5 @@
-#ifndef AUBO_KINEMATICS_H
-#define AUBO_KINEMATICS_H
+#ifndef AUBO_KINEMATICS_H_
+#define AUBO_KINEMATICS_H_
 
 #include <iostream>
 #include <stdlib.h>
@@ -14,8 +14,13 @@ using Eigen::Matrix4d;
 using Eigen::VectorXd;
 using Eigen::Vector3d;
 
-#define MIN -175    //随机数产生的范围
-#define MAX 175
+#ifndef MIN
+#define MIN -175  
+#endif
+#ifndef MAX
+#define MAX -175  
+#endif
+
 #define MAXIUM_ITERATOR 10
 
 int SIGN(double x);
