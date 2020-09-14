@@ -25,7 +25,7 @@ class AuboRosDriver():
         self.robot = Auboi5Robot()
         
         self.aubo_joint_movej_sub = rospy.Subscriber('/aubo_ros_script/movej', String, self.aubo_joint_movej, queue_size=1)
-        self.aubo_joint_movej_sub = rospy.Subscriber('/aubo_ros_script_new/movej', String, self.aubo_joint_new_movej, queue_size=1)
+        self.aubo_joint_movej_new_sub = rospy.Subscriber('/aubo_ros_script_new/movej', String, self.aubo_joint_new_movej, queue_size=1)
         self.aubo_joint_movel_sub = rospy.Subscriber('/aubo_ros_script/movel', String, self.aubo_joint_movel, queue_size=1)
         self.aubo_joint_movet_sub = rospy.Subscriber('/aubo_ros_script/movet', String, self.aubo_joint_movet, queue_size=1)
 

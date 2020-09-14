@@ -131,7 +131,7 @@ int main(int argc, char **argv)
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_0 (new pcl::PointCloud<pcl::PointXYZRGB>),
                                         cloud_filtered (new pcl::PointCloud<pcl::PointXYZRGB>)
                                         ,cloud_filtered_1 (new pcl::PointCloud<pcl::PointXYZRGB>),
-                                        final (new pcl::PointCloud<pcl::PointXYZRGB>),cloud_filtered_2 (new pcl::PointCloud<pcl::PointXYZRGB>),cloud_filtered_3 (new pcl::PointCloud<pcl::PointXYZRGB>);
+                                        final (new pcl::PointCloud<pcl::PointXYZRGB>),cloud_pub (new pcl::PointCloud<pcl::PointXYZRGB>),cloud_filtered_3 (new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_p(new pcl::PointCloud<pcl::PointXYZRGB>), cloud_f(new pcl::PointCloud<pcl::PointXYZRGB>);
     PointCloud_EM::Ptr emCloud(new PointCloud_EM());
     emCloud->height = IMG_HEIGHT;
@@ -371,10 +371,16 @@ int main(int argc, char **argv)
                                         p.z=cloud_vector_new_matrix(2,0);
                                         p.rgb=pub_downsample_cloud->points[i].rgb;
                                         cloud_filtered_1->points.push_back(p);
+                                        pcl::PointXYZRGB p_p;
+                                        p_p.x=cloud_vector_new_matrix(0,0);
+                                        p_p.y=cloud_vector_new_matrix(1,0);
+                                        p_p.z=cloud_vector_new_matrix(2,0);
+                                        p_p.rgb=pub_downsample_cloud->points[i].rgb;
+                                        cloud_pub->points.push_back(p);
                                         /* code */
                                     }
 
-                                    pcl::toROSMsg(*cloud_filtered_1, output);
+                                    pcl::toROSMsg(*cloud_pub, output);
                                     usleep(100*1000);
                                     output.header.frame_id = "smarteye_odom";
                                     pcl_pub.publish(output);

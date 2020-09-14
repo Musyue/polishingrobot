@@ -113,14 +113,14 @@ def main(test_count):
 
 
                 #joint_radian = deg_to_rad((6.33,18.66,142.092,120.32,86.375,-78.97))#((0,0,0,0,0,0))#开始right0
-                joint_radian_1=deg_to_rad((32.64651996879213, -99.16010568455614, 86.69431346599761, 9.165040662417706, -56.80744529642997, 87.32765123652544))
-                joint_radian_2 = deg_to_rad((27.12,-118.19,84.76,119.53,69.55,-71.9))#20200826最低
+                joint_radian_1=deg_to_rad((15.17,58.218,158.196,102.856,74.259,-91.6399))#32.64651996879213, -99.16010568455614, 86.69431346599761, 9.165040662417706, -56.80744529642997, 87.32765123652544))
+                joint_radian_2 = deg_to_rad((23.033,-71.261,143.8354,155.90,77.05,-75.4))#20200826最低
                 joint_radian_3 = deg_to_rad((23.033,-71.261,143.8354,155.90,77.05,-75.4))#20200826最低
-                robot.move_joint(joint_radian_3)
+                robot.move_joint(joint_radian_1)
                 # print(joint_radian)
-                robot.move_line(joint_radian_2)
-                
-                robot.move_line(joint_radian_1)
+                robot.move_line(joint_radian_3)
+
+                # robot.move_line(joint_radian_1)
                 
                 # joint_radian = deg_to_rad((15.17,58.218,158.196,102.856,74.259,-91.6399))#20200826最低
                 #zuigao 23.033,-3.3075,19.223,-27.29,77.05,-75.4391
