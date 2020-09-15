@@ -133,6 +133,7 @@ int main(int argc, char **argv)
                                         ,cloud_filtered_1 (new pcl::PointCloud<pcl::PointXYZRGB>),
                                         cloud_pub (new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_p(new pcl::PointCloud<pcl::PointXYZRGB>), cloud_f(new pcl::PointCloud<pcl::PointXYZRGB>);
+    pcl::PointCloud<pcl::PointXYZINormal>::Ptr pub_cloud (new pcl::PointCloud<pcl::PointXYZINormal>);
     PointCloud_EM::Ptr emCloud(new PointCloud_EM());
     emCloud->height = IMG_HEIGHT;
     emCloud->width = IMG_WIDTH;
@@ -149,7 +150,7 @@ int main(int argc, char **argv)
     {
         ros::param::get("/smarteye_with_viewpoint/front_diffrential_num",front_diffrential_num);
         ros::param::get("/smarteye_with_viewpoint/oblique_diffrential_num",oblique_diffrential_num);
-        count_back=front_diffrential_num+oblique_diffrential_num+2;
+        count_back=front_diffrential_num+oblique_diffrential_num+1;//
     }
 
     auto start = std::chrono::steady_clock::now();
@@ -305,7 +306,7 @@ int main(int argc, char **argv)
                                     std_msgs::String msg;
                                     msg.data=str1;
                                     aubo_control_pub.publish(msg);
-                                    usleep(2000*1000);
+                                    usleep(3000*1000);
                                     std::cout<<str1<<std::endl;
                                     std::cout<<"---------------------------------"<<count_back<<std::endl;
                                        
@@ -313,6 +314,7 @@ int main(int argc, char **argv)
                                     {
                                         ros::param::set("/smarteye_with_viewpoint/go_back_initial_flag",0);
                                         count_back=front_diffrential_num+oblique_diffrential_num+2;
+                                        count_pub_joint=0;
                                     }
                                      count_back--;
                                 }
@@ -685,7 +687,7 @@ int main(int argc, char **argv)
                                             /* code */
                                             std::cout<<S[j]<<std::endl;
                                         }
-                                        pcl::PointCloud<pcl::PointXYZINormal>::Ptr pub_cloud (new pcl::PointCloud<pcl::PointXYZINormal>);
+                                        // pcl::PointCloud<pcl::PointXYZINormal>::Ptr pub_cloud (new pcl::PointCloud<pcl::PointXYZINormal>);
                                         std::cout<<"TSP Solution with the minimal path Sum:"<<sum<<std::endl;
                                         for (size_t i = 0; i < last_out_cloud->size(); i++)
                                         {
@@ -713,7 +715,7 @@ int main(int argc, char **argv)
                                         }
 
                                         pub_cloud->width=1;
-                                        pub_cloud->height=last_out_cloud->points.size();
+                                        pub_cloud->height=pub_cloud->height+last_out_cloud->points.size();
 
                                         pcl::toROSMsg(*pub_cloud, shortest_path_output);
                                         shortest_path_output.header.frame_id = "smarteye_odom";

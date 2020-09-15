@@ -120,7 +120,7 @@ def main(test_count):
                 joint_radian_00=(0.402002,0.208869,2.6179,1.42418,1.34478,-1.31598)
                 joint_radian_01=(0.402002,0.526557,1.93496,0.423564,1.34478,-1.31598)
                 joint_radian_02=(0.402002,0.1339,0.763977,-0.354767,1.34478,-1.31598)
-                joint_radian_03=deg_to_rad((-4.56702,64.6972,129.2913,79.8718,102.09,-88.3972))
+                joint_radian_03=deg_to_rad((-4.56702,74.1264,149.048,90.1996,102.09,-88.3972))
                 joint_radian_04=(-0.0797095,0.804857,1.58836,1.05015,1.78181,-1.54282)
                 #   0.402002 0.402002 0.402002 0.264766        0        0        0
                 # -1.24374    0.208869 0.526557 0.448511       0        0        0
@@ -133,7 +133,7 @@ def main(test_count):
                 # robot.move_joint(joint_radian_00)
                 # robot.move_joint(joint_radian_01)
                 # robot.move_joint(joint_radian_02)
-                robot.move_joint(joint_radian_03)
+                robot.move_joint(joint_radian_3)
                 # robot.move_joint(joint_radian_04)
                 
                 # joint_radian = deg_to_rad((15.17,58.218,158.196,102.856,74.259,-91.6399))#20200826最低
