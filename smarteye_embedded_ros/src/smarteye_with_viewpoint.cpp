@@ -145,10 +145,11 @@ int main(int argc, char **argv)
     int oblique_diffrential_num=0;
     float oblique_viewpoint_the_max_height=0.0;
     int count_back=0;
-    if(ros::param::has("/smarteye_with_viewpoint/front_diffrential_num"))
+    if(ros::param::has("/smarteye_with_viewpoint/front_diffrential_num") && ros::param::has("/smarteye_with_viewpoint/oblique_diffrential_num"))
     {
         ros::param::get("/smarteye_with_viewpoint/front_diffrential_num",front_diffrential_num);
-        count_back=front_diffrential_num;
+        ros::param::get("/smarteye_with_viewpoint/oblique_diffrential_num",oblique_diffrential_num);
+        count_back=front_diffrential_num+oblique_diffrential_num+2;
     }
 
     auto start = std::chrono::steady_clock::now();
@@ -304,13 +305,14 @@ int main(int argc, char **argv)
                                     std_msgs::String msg;
                                     msg.data=str1;
                                     aubo_control_pub.publish(msg);
+                                    usleep(2000*1000);
                                     std::cout<<str1<<std::endl;
                                     std::cout<<"---------------------------------"<<count_back<<std::endl;
                                        
                                     if(count_back==0)
                                     {
                                         ros::param::set("/smarteye_with_viewpoint/go_back_initial_flag",0);
-                                        count_back=front_diffrential_num+oblique_diffrential_num+1;
+                                        count_back=front_diffrential_num+oblique_diffrential_num+2;
                                     }
                                      count_back--;
                                 }
@@ -632,7 +634,6 @@ int main(int argc, char **argv)
                                         /* code */
                                             for (size_t iii = 0; iii < n; iii++)
                                             {
-                                                /* code */
                                                 if(t!=iii)
                                                 {
                                                 D[t][iii]=sqrt(pow(last_out_cloud->points[t].x-last_out_cloud->points[iii].x,2)+pow(last_out_cloud->points[t].y-last_out_cloud->points[iii].y,2)+pow(last_out_cloud->points[t].z-last_out_cloud->points[iii].z,2));
