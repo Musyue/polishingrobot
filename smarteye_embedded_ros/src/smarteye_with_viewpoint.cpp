@@ -210,7 +210,7 @@ int main(int argc, char **argv)
                     MatrixXd T_view_point_front(4,4);
                     deg_to_rad(q_rad_view_point_front,q_deg_view_point_front);                    
                     aubo_forward(T_view_point_front,q_rad_view_point_front);
-
+                    std::cout<<"T_view_point_front"<<T_view_point_front<<std::endl;
                     int count_tbc=0;
                     for (size_t i = 0; i < 4; i++)
                     {
@@ -257,7 +257,7 @@ int main(int argc, char **argv)
                                 VectorXd q_temp_re(6);
                                 // std::cout<<T_q_cali(2,3)<<std::endl;
                                 T_view_point_lowest(2,3)=temp_T_Z_lowest_point+oblique_deta_z*i;
-                                // std::cout<<" T_view_point_lowest(2,3)"<< T_view_point_lowest(2,3)<<std::endl;
+                                std::cout<<" T_view_point_lowest(2,3)"<< T_view_point_lowest(2,3)<<std::endl;
                                 bool res=GetInverseResult(T_view_point_lowest,q_rad_view_point_lowest,q_temp_re);
                                 if (res)
                                 {
@@ -267,18 +267,18 @@ int main(int argc, char **argv)
 
                                 }
                             }
-                            for (size_t i = 3; i <= front_diffrential_num+oblique_diffrential_num+1; i++)
+                            for (size_t i = 0; i < front_diffrential_num; i++)
                             {
                                 VectorXd q_temp_re(6);
                                 // std::cout<<T_q_cali(2,3)<<std::endl;
                                 T_view_point_front(2,3)=temp_T_Z_front_point+front_deta_z*i;
-                                // std::cout<<" T_view_point_lowest(2,3)"<< T_view_point_lowest(2,3)<<std::endl;
+                                std::cout<<"T_view_point_front(2,3)"<< T_view_point_front(2,3)<<std::endl;
                                 bool res=GetInverseResult(T_view_point_front,q_rad_view_point_front,q_temp_re);
                                 if (res)
                                 {
-                                    q_sol_total(0,i) = q_temp_re(0);    q_sol_total(1,i) = q_temp_re(1);
-                                    q_sol_total(2,i) = q_temp_re(2);    q_sol_total(3,i) = q_temp_re(3);
-                                    q_sol_total(4,i) = q_temp_re(4);    q_sol_total(5,i) = q_temp_re(5);
+                                    q_sol_total(0,i+oblique_diffrential_num+2) = q_temp_re(0);    q_sol_total(1,i+oblique_diffrential_num+2) = q_temp_re(1);
+                                    q_sol_total(2,i+oblique_diffrential_num+2) = q_temp_re(2);    q_sol_total(3,i+oblique_diffrential_num+2) = q_temp_re(3);
+                                    q_sol_total(4,i+oblique_diffrential_num+2) = q_temp_re(4);    q_sol_total(5,i+oblique_diffrential_num+2) = q_temp_re(5);
 
                                 }
                             }

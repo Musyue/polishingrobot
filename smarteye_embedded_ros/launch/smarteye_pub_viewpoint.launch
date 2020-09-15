@@ -7,10 +7,10 @@
   <node name="smarteye_with_viewpoint" pkg="smarteye_embedded_ros" type="smarteye_with_viewpoint" output="screen">
   <param name="eye2hand_config_addr" type="string" value="$(find smarteye_embedded_ros)/config/camera_aubo_config.yaml" />
   <param name="open_camera_flag" type="int" value="0"/>
-  <param name="viewpoint_the_max_height" type="double" value="1.36"/>
-  <param name="oblique_viewpoint_the_max_height" type="double" value="1.0"/>
+  <param name="viewpoint_the_max_height" type="double" value="1.5"/>
+  <param name="oblique_viewpoint_the_max_height" type="double" value="0.8"/>
   <param name="smarteye_frame_id" type="string" value="smarteye_odom"/>
-  <param name="front_diffrential_num" type="int" value="3"/>
+  <param name="front_diffrential_num" type="int" value="1"/>
   <param name="oblique_diffrential_num" type="int" value="2"/>
   <param name="go_back_initial_flag" type="int" value="0"/>
   <param name="open_aubo_flag" type="int" value="0"/>
