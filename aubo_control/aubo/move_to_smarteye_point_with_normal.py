@@ -169,26 +169,7 @@ class MoveSmartEyeVisonControl():
         print("normal_vector",normal_vector)
         print("nRc",nRc)
         return nRc
-        # nRc_list=nRc.tolist()
-        # nRctemp=[]
-        # reslist=[]
-        # for i in range(len(nRc_list)):
-        #     for j in range(len(nRc_list[i])):
-        #         nRctemp.append(nRc_list[i][j])
-        # for i in range(len(nRctemp)):
-        #     if i ==2:
-        #         reslist.append(nRctemp[i])
-        #         reslist.append(trans_point[0])
-        #     elif i==5:
-        #         reslist.append(nRctemp[i])
-        #         reslist.append(trans_point[1])
-        #     elif i==8:
-        #         reslist.append(nRctemp[i])
-        #         reslist.append(trans_point[2])
-        #     else:
-        #         reslist.append(nRctemp[i])
 
-        # return reslist+[0,0,0,1]
     def Get_bTp_from_SmartEye_WithOrientaion_In_Normal(self,point_data):#in Frame of camera
         return numpy.dot(numpy.matrix(self.SmartEye_bTc).reshape((4,4)),numpy.matrix(point_data+[1]).reshape((4,1)))
         # cTp=self.transfer_2normal(normal_vector,[0,0,0])

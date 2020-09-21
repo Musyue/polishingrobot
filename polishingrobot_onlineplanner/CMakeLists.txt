@@ -27,7 +27,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 find_package(Eigen3 REQUIRED)
 find_package(Boost REQUIRED system filesystem date_time thread)
-
+find_package(PCL REQUIRED)
 
 
 ###################################
@@ -63,6 +63,7 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIR} 
   ${EIGEN3_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
 )
 
 add_executable(polishingrobot_onlineplanner
@@ -78,6 +79,9 @@ target_link_libraries(polishingrobot_onlineplanner ${catkin_LIBRARIES})
 
 add_executable(motion_planning_aubo src/motion_planning_aubo.cpp)
 target_link_libraries(motion_planning_aubo ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+
+add_executable(aubo_10_test_node src/aubo_10_test_node.cpp)
+target_link_libraries(aubo_10_test_node ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${PCL_LIBRARIES})
 
 add_executable(marker_test src/marker_test.cpp)
 target_link_libraries(marker_test ${catkin_LIBRARIES} )

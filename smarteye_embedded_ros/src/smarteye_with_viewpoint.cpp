@@ -315,6 +315,13 @@ int main(int argc, char **argv)
                                         ros::param::set("/smarteye_with_viewpoint/go_back_initial_flag",0);
                                         count_back=front_diffrential_num+oblique_diffrential_num+2;
                                         count_pub_joint=0;
+                                        if(ros::param::has("/smarteye_with_viewpoint/go_back_initial_flag"))
+                                        {
+                                            ROS_INFO("-------Congritulations Scan over!!------");
+                                            ros::param::set("/smarteye_with_viewpoint/viewpoint_take_picture_ok_flag",1);
+                                        }
+
+                                        
                                     }
                                      count_back--;
                                 }
@@ -711,7 +718,14 @@ int main(int argc, char **argv)
                                             p_pub.normal_y=last_out_cloud->points[S[i]].normal_y;
                                             p_pub.normal_z=last_out_cloud->points[S[i]].normal_z;
                                             p_pub.curvature=last_out_cloud->points[S[i]].curvature;
-                                            pub_cloud->points.push_back(p_pub);
+                                            if(std::isnan(p_pub.normal_x) || std::isnan(p_pub.normal_y) || std::isnan(p_pub.normal_z))
+                                            {
+                                                continue;
+                                            }else
+                                            {
+                                                pub_cloud->points.push_back(p_pub);
+                                            }
+                                            
                                         }
 
                                         pub_cloud->width=1;
