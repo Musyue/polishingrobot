@@ -23,14 +23,15 @@ namespace aubo10_polishing_control {
     class Aubo10Polishing {
         public:
             Aubo10Polishing();
-            ~Aubo10Polishing() {}
+            ~Aubo10Polishing() {};
             void Pub_Sub_Setup();
+            void cloud_cb_callback(const boost::shared_ptr<const sensor_msgs::PointCloud2>& input);
 
         private:
             ros::NodeHandle n_private;
             ros::Subscriber feature_sub;
 
 
-    }
+    };
 }
 #endif // AUBO_10_POLISHING_OPREATING_H

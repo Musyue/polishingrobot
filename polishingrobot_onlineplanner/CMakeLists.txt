@@ -83,6 +83,10 @@ target_link_libraries(motion_planning_aubo ${catkin_LIBRARIES} ${Boost_LIBRARIES
 add_executable(aubo_10_test_node src/aubo_10_test_node.cpp)
 target_link_libraries(aubo_10_test_node ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${PCL_LIBRARIES})
 
+add_executable(aubo_10_polishing_opreating_node src/aubo_10_polishing_opreating_node.cpp src/aubo_10_polishing_opreating.cpp)
+target_link_libraries(aubo_10_polishing_opreating_node ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${PCL_LIBRARIES})
+
+
 add_executable(marker_test src/marker_test.cpp)
 target_link_libraries(marker_test ${catkin_LIBRARIES} )
 
