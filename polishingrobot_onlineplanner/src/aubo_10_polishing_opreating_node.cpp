@@ -16,6 +16,7 @@ int main(int argc, char** argv) {
   ros::Rate r(aubo_10_ros_pub_hz);
   while (ros::ok()) {
     // imu_reader.ReadData();
+    aubo10polishing.Print_cloud();
     ros::spinOnce();
     r.sleep();
   }

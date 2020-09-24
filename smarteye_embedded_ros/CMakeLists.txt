@@ -36,7 +36,7 @@ catkin_package(
 set(SmarteyeAPI_INCLUDE "/data/ros/reno_ws/src/polishingrobot/smarteye_embedded_ros/smart_eye_sdk/include")
 set(SmarteyeAPI_LIBS_DIR "/data/ros/reno_ws/src/polishingrobot/smarteye_embedded_ros/smart_eye_sdk/lib")
 include_directories(
-# include
+  include
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
