@@ -141,13 +141,6 @@ bool Aubo10RosDriver::aubo_movej(double jointdeg[],float acc,float vel,bool goze
     sleep(100);
 }
 
-bool parse_line(std::string const& line, std::string& name, double& a, double& b, double& c) {
-    using It = std::string::const_iterator;
-    qi::rule<It, std::string()> quoted = '"' >> *~qi::char_('"') >> '"';
-
-    It f = line.begin(), l = line.end();
-    return qi::phrase_parse(f, l, quoted >> qi::double_ >> qi::double_ >> qi::double_>>qi::double_ >> qi::double_ >> qi::double_>>qi::double_ >> qi::double_, qi::blank, name, a, b, c);
-}
 void Aubo10RosDriver::MoveJ_Callback(const std_msgs::String::ConstPtr& msg)
  {
     ROS_INFO("I heard: [%s]", msg->data.c_str());
@@ -162,14 +155,51 @@ void Aubo10RosDriver::MoveJ_Callback(const std_msgs::String::ConstPtr& msg)
     else
     {
         ROS_INFO("We will move to [%s]",msg->data.c_str());
-        std::string name;
-        double a, b, c;
+        using boost::spirit::ascii::space;
+        typedef std::string::const_iterator iterator_type;
+        typedef aubo10_ros_driver::aubo_movej_parser<iterator_type> aubo_movej_parser;
+        aubo_movej_parser g; // Our grammar
+        std::string str;
+        str=msg->data.c_str();
+        aubo10_ros_driver::aubo_movej aubomovej;
+        std::string::const_iterator iter = str.begin();
+        std::string::const_iterator end = str.end();
+        bool r = phrase_parse(iter, end, g, space, aubomovej);
+        if (r && iter == end)
+        {
+            std::cout << boost::fusion::tuple_open('[');
+            std::cout << boost::fusion::tuple_close(']');
+            std::cout << boost::fusion::tuple_delimiter(", ");
 
-        if (parse_line("\"this is a name\" 39.789876 -83.997978 30.000000", name, a, b, c)) {
-            std::cout << "Parsed: \n"
-                << " Name '" << name << "'\n"
-                << " (a,b,c): (" << a << ", " << b << ", " << c << ")\n";
+            std::cout << "-------------------------\n";
+            std::cout << "Parsing succeeded\n";
+            std::cout << "got: " << boost::fusion::as_vector(aubomovej) << std::endl;
+            std::cout << "\n-------------------------\n";
         }
+        else
+        {
+            std::cout << "-------------------------\n";
+            std::cout << "Parsing failed\n";
+            std::cout << "-------------------------\n";
+        }
+        for (size_t i = 0; i < boost::fusion::as_vector(aubomovej).size(); i++)
+        {
+            std::cout << "got: " << boost::fusion::as_vector(aubomovej)[i] << std::endl;
+        }
+        
+
+        // std::string name;
+        // double joint0,joint1,joint2,joint3,joint4,joint5,acc,vel,gozero;
+
+        // if (parse_line(msg->data.c_str(), name, joint0,joint1,joint2,joint3,joint4,joint5,acc,vel,gozero)) {
+        //     std::cout << "Parsed: \n"
+        //         << " Name '" << name << "'\n"
+        //         << " (a,b,c): (" <<joint0<<" "<<joint1<<" "<<joint2<<" "<<joint3<<" "<<joint4<<" "<<joint5<<" "<<acc<<" "<<vel<<" "<<gozero<< ")\n";
+        // }else
+        // {
+        //     ROS_ERROR("Aubo10 movej command error,please check");
+        // }
+        
     }
     
 
