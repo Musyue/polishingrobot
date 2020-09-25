@@ -146,8 +146,8 @@ link_libraries(${Auboprotobuf_LIBS} ${AuborobotController_LIBS})
 link_directories(${AuboRobotSDK_LIBS_DIR} ${AuboLibConfig_LIBS_DIR} ${Aubolog4cplus_LIBS_DIR})
 
 
-add_executable(aubo_main src/example_3.cpp src/aubo_main.cpp src/util.cpp)
-target_link_libraries(aubo_main pthread ${catkin_LIBRARIES} auborobotcontroller log4cplus config)
+# add_executable(aubo_main src/example_3.cpp src/aubo_main.cpp src/util.cpp)
+# target_link_libraries(aubo_main pthread ${catkin_LIBRARIES} auborobotcontroller log4cplus config)
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
