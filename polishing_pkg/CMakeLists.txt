@@ -219,8 +219,8 @@ message(STATUS "Pcl lib:${PCL_INCLUDE_DIRS}")
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
-add_executable(pcl_ransac_plannar src/pcl_ransac_plannar.cpp)
-target_link_libraries(pcl_ransac_plannar ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+#add_executable(pcl_ransac_plannar src/pcl_ransac_plannar.cpp)
+#target_link_libraries(pcl_ransac_plannar ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 
 add_executable(pcl_ransac_plannar_bk src/pcl_ransac_plannar_bk.cpp )
 target_link_libraries(pcl_ransac_plannar_bk ${catkin_LIBRARIES} ${PCL_LIBRARIES})

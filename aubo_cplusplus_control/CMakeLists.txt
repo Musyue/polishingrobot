@@ -103,12 +103,12 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+  # INCLUDE_DIRS
 #  LIBRARIES aubo_cplusplus_control
 #  CATKIN_DEPENDS roscpp rospy std_msgs
 #  DEPENDS system_lib
 )
-
+find_package(yaml-cpp REQUIRED)
 ###########
 ## Build ##
 ###########
@@ -146,7 +146,10 @@ link_libraries(${Auboprotobuf_LIBS} ${AuborobotController_LIBS})
 link_directories(${AuboRobotSDK_LIBS_DIR} ${AuboLibConfig_LIBS_DIR} ${Aubolog4cplus_LIBS_DIR})
 
 
-# add_executable(aubo_main src/example_3.cpp src/aubo_main.cpp src/util.cpp)
+add_executable(aubo_ros_driver_node src/aubo_ros_driver_node.cpp src/aubo_ros_driver.cpp src/util.cpp)
+target_link_libraries(aubo_ros_driver_node yaml-cpp pthread ${catkin_LIBRARIES} auborobotcontroller log4cplus config)
+
+# add_executable(aubo_main src/example_3.cpp src/aubo_ros_driver.cpp src/util.cpp)
 # target_link_libraries(aubo_main pthread ${catkin_LIBRARIES} auborobotcontroller log4cplus config)
 
 ## Declare a C++ library

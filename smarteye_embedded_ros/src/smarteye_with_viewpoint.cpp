@@ -133,6 +133,7 @@ int main(int argc, char **argv)
                                         ,cloud_filtered_1 (new pcl::PointCloud<pcl::PointXYZRGB>),
                                         cloud_pub (new pcl::PointCloud<pcl::PointXYZRGB>);
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_p(new pcl::PointCloud<pcl::PointXYZRGB>), cloud_f(new pcl::PointCloud<pcl::PointXYZRGB>);
+    pcl::PointCloud<pcl::PointXYZINormal>::Ptr pub_cloud (new pcl::PointCloud<pcl::PointXYZINormal>);
     PointCloud_EM::Ptr emCloud(new PointCloud_EM());
     emCloud->height = IMG_HEIGHT;
     emCloud->width = IMG_WIDTH;
@@ -145,10 +146,11 @@ int main(int argc, char **argv)
     int oblique_diffrential_num=0;
     float oblique_viewpoint_the_max_height=0.0;
     int count_back=0;
-    if(ros::param::has("/smarteye_with_viewpoint/front_diffrential_num"))
+    if(ros::param::has("/smarteye_with_viewpoint/front_diffrential_num") && ros::param::has("/smarteye_with_viewpoint/oblique_diffrential_num"))
     {
         ros::param::get("/smarteye_with_viewpoint/front_diffrential_num",front_diffrential_num);
-        count_back=front_diffrential_num;
+        ros::param::get("/smarteye_with_viewpoint/oblique_diffrential_num",oblique_diffrential_num);
+        count_back=front_diffrential_num+oblique_diffrential_num+1;//
     }
 
     auto start = std::chrono::steady_clock::now();
@@ -210,7 +212,7 @@ int main(int argc, char **argv)
                     MatrixXd T_view_point_front(4,4);
                     deg_to_rad(q_rad_view_point_front,q_deg_view_point_front);                    
                     aubo_forward(T_view_point_front,q_rad_view_point_front);
-
+                    std::cout<<"T_view_point_front"<<T_view_point_front<<std::endl;
                     int count_tbc=0;
                     for (size_t i = 0; i < 4; i++)
                     {
@@ -257,7 +259,7 @@ int main(int argc, char **argv)
                                 VectorXd q_temp_re(6);
                                 // std::cout<<T_q_cali(2,3)<<std::endl;
                                 T_view_point_lowest(2,3)=temp_T_Z_lowest_point+oblique_deta_z*i;
-                                // std::cout<<" T_view_point_lowest(2,3)"<< T_view_point_lowest(2,3)<<std::endl;
+                                std::cout<<" T_view_point_lowest(2,3)"<< T_view_point_lowest(2,3)<<std::endl;
                                 bool res=GetInverseResult(T_view_point_lowest,q_rad_view_point_lowest,q_temp_re);
                                 if (res)
                                 {
@@ -267,18 +269,18 @@ int main(int argc, char **argv)
 
                                 }
                             }
-                            for (size_t i = 3; i <= front_diffrential_num+oblique_diffrential_num+1; i++)
+                            for (size_t i = 0; i < front_diffrential_num; i++)
                             {
                                 VectorXd q_temp_re(6);
                                 // std::cout<<T_q_cali(2,3)<<std::endl;
                                 T_view_point_front(2,3)=temp_T_Z_front_point+front_deta_z*i;
-                                // std::cout<<" T_view_point_lowest(2,3)"<< T_view_point_lowest(2,3)<<std::endl;
+                                std::cout<<"T_view_point_front(2,3)"<< T_view_point_front(2,3)<<std::endl;
                                 bool res=GetInverseResult(T_view_point_front,q_rad_view_point_front,q_temp_re);
                                 if (res)
                                 {
-                                    q_sol_total(0,i) = q_temp_re(0);    q_sol_total(1,i) = q_temp_re(1);
-                                    q_sol_total(2,i) = q_temp_re(2);    q_sol_total(3,i) = q_temp_re(3);
-                                    q_sol_total(4,i) = q_temp_re(4);    q_sol_total(5,i) = q_temp_re(5);
+                                    q_sol_total(0,i+oblique_diffrential_num+2) = q_temp_re(0);    q_sol_total(1,i+oblique_diffrential_num+2) = q_temp_re(1);
+                                    q_sol_total(2,i+oblique_diffrential_num+2) = q_temp_re(2);    q_sol_total(3,i+oblique_diffrential_num+2) = q_temp_re(3);
+                                    q_sol_total(4,i+oblique_diffrential_num+2) = q_temp_re(4);    q_sol_total(5,i+oblique_diffrential_num+2) = q_temp_re(5);
 
                                 }
                             }
@@ -304,13 +306,22 @@ int main(int argc, char **argv)
                                     std_msgs::String msg;
                                     msg.data=str1;
                                     aubo_control_pub.publish(msg);
+                                    usleep(3000*1000);
                                     std::cout<<str1<<std::endl;
                                     std::cout<<"---------------------------------"<<count_back<<std::endl;
                                        
                                     if(count_back==0)
                                     {
                                         ros::param::set("/smarteye_with_viewpoint/go_back_initial_flag",0);
-                                        count_back=front_diffrential_num+oblique_diffrential_num+1;
+                                        count_back=front_diffrential_num+oblique_diffrential_num+2;
+                                        count_pub_joint=0;
+                                        if(ros::param::has("/smarteye_with_viewpoint/go_back_initial_flag"))
+                                        {
+                                            ROS_INFO("-------Congritulations Scan over!!------");
+                                            ros::param::set("/smarteye_with_viewpoint/viewpoint_take_picture_ok_flag",1);
+                                        }
+
+                                        
                                     }
                                      count_back--;
                                 }
@@ -632,7 +643,6 @@ int main(int argc, char **argv)
                                         /* code */
                                             for (size_t iii = 0; iii < n; iii++)
                                             {
-                                                /* code */
                                                 if(t!=iii)
                                                 {
                                                 D[t][iii]=sqrt(pow(last_out_cloud->points[t].x-last_out_cloud->points[iii].x,2)+pow(last_out_cloud->points[t].y-last_out_cloud->points[iii].y,2)+pow(last_out_cloud->points[t].z-last_out_cloud->points[iii].z,2));
@@ -684,7 +694,7 @@ int main(int argc, char **argv)
                                             /* code */
                                             std::cout<<S[j]<<std::endl;
                                         }
-                                        pcl::PointCloud<pcl::PointXYZINormal>::Ptr pub_cloud (new pcl::PointCloud<pcl::PointXYZINormal>);
+                                        // pcl::PointCloud<pcl::PointXYZINormal>::Ptr pub_cloud (new pcl::PointCloud<pcl::PointXYZINormal>);
                                         std::cout<<"TSP Solution with the minimal path Sum:"<<sum<<std::endl;
                                         for (size_t i = 0; i < last_out_cloud->size(); i++)
                                         {
@@ -708,11 +718,18 @@ int main(int argc, char **argv)
                                             p_pub.normal_y=last_out_cloud->points[S[i]].normal_y;
                                             p_pub.normal_z=last_out_cloud->points[S[i]].normal_z;
                                             p_pub.curvature=last_out_cloud->points[S[i]].curvature;
-                                            pub_cloud->points.push_back(p_pub);
+                                            if(std::isnan(p_pub.normal_x) || std::isnan(p_pub.normal_y) || std::isnan(p_pub.normal_z))
+                                            {
+                                                continue;
+                                            }else
+                                            {
+                                                pub_cloud->points.push_back(p_pub);
+                                            }
+                                            
                                         }
 
                                         pub_cloud->width=1;
-                                        pub_cloud->height=last_out_cloud->points.size();
+                                        pub_cloud->height=pub_cloud->height+last_out_cloud->points.size();
 
                                         pcl::toROSMsg(*pub_cloud, shortest_path_output);
                                         shortest_path_output.header.frame_id = "smarteye_odom";
