@@ -46,17 +46,21 @@ namespace aubo10_ros_driver {
         int gozero;
 
     };
-    class Aubo10RosDriver {
+    class AuboRosDriver {
         public:
-            Aubo10RosDriver();
-            ~Aubo10RosDriver() {};
-
-            
+            AuboRosDriver();
+            ~AuboRosDriver() {};
             void init_aubo_driver();
             void shutdown_aubo();
             void logout_aubo();
+            //MOVEJ
             bool aubo_movej(double jointdeg[],float acc,float vel,bool gozero);
             void MoveJ_Callback(const std_msgs::String::ConstPtr& msg);
+            //MOVEL
+            void MoveL_Callback(const std_msgs::String::ConstPtr& msg);
+            //MOVET
+
+            void MoveT_Callback(const std_msgs::String::ConstPtr& msg);
 
         private:
             //Use for read yaml data
@@ -65,6 +69,7 @@ namespace aubo10_ros_driver {
             int AuboPort;
             ServiceInterface robotService;
             int ret;
+
             
 
     };
