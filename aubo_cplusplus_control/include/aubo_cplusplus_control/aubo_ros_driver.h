@@ -27,7 +27,7 @@
 #include <boost/spirit/include/phoenix_object.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
 #include <boost/fusion/include/io.hpp>
-
+#include <boost/fusion/tuple.hpp>
 #define SERVER_HOST "192.168.1.115"
 #define SERVER_PORT 8899
 namespace aubo10_ros_driver {
@@ -95,8 +95,6 @@ namespace aubo10_ros_driver
             using qi::lexeme;
             using ascii::char_;
 
-            //quoted_string %= lexeme['"' >> +(char_ - '"') >> '"'];
-
             start %=
                 lit("movej")
                 >> '{'
@@ -127,5 +125,7 @@ namespace aubo10_ros_driver
         //qi::rule<Iterator, std::string(), ascii::space_type> quoted_string;
         qi::rule<Iterator, aubo_movej(), ascii::space_type> start;
     };
+
+
 }
 #endif
