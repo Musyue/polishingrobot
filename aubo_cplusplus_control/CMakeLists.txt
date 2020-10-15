@@ -116,10 +116,10 @@ find_package(yaml-cpp REQUIRED)
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 set(AuboRobotSDK_INCLUDE "/data/ros/reno_ws/src/polishingrobot/aubo_cplusplus_control/dependents/robotSDK/inc")
-set(AuboRobotSDK_LIBS_DIR "/data/ros/reno_ws/src/polishingrobot/aubo_cplusplus_control/dependents/robotSDK/lib/linux_x64")
+set(AuboRobotSDK_LIBS_DIR "/data/ros/reno_ws/src/polishingrobot/aubo_cplusplus_control/dependents/robotSDK/lib/linux_x64/")
 
 set(AuboLibConfig_INCLUDE "/data/ros/reno_ws/src/polishingrobot/aubo_cplusplus_control/dependents/libconfig/linux_x64/inc")
-set(AuboLibConfig_LIBS_DIR "/data/ros/reno_ws/src/polishingrobot/aubo_cplusplus_control/dependents/libconfig/linux_x64/lib")
+set(AuboLibConfig_LIBS_DIR "/data/ros/reno_ws/src/polishingrobot/aubo_cplusplus_control/dependents/libconfig/linux_x64/lib/")
 
 # set(Auboprotobuf_INCLUDE "/data/ros/reno_ws/src/polishingrobot/aubo_cplusplus_control/dependents/libconfig/linux_x64/inc")
 set(Auboprotobuf_LIBS "/data/ros/reno_ws/src/polishingrobot/aubo_cplusplus_control/dependents/protobuf/linux-x64/lib/libprotobuf.a")
@@ -131,7 +131,9 @@ set(AuborobotController_LIBS "/data/ros/reno_ws/src/polishingrobot/aubo_cplusplu
 set(Aubolog4cplus_INCLUDE "/data/ros/reno_ws/src/polishingrobot/aubo_cplusplus_control/dependents/log4cplus/linux_x64/inc/log4cplus")
 set(Aubolog4cplus_LIBS_DIR "/data/ros/reno_ws/src/polishingrobot/aubo_cplusplus_control/dependents/log4cplus/linux_x64/lib")
 
-
+# message(AuboRobotSDK_LIBRARY ----- ${AuboRobotSDK_LIBS_DIR})
+# find_library(AuboRobotSDK_LIBRARY auborobotcontroller PATHS ${AuboRobotSDK_LIBS_DIR})
+# message(AuboRobotSDK_LIBRARY_HH ----- ${AuboRobotSDK_LIBRARY})
 # set(AuboTest_INCLUDE "/data/ros/reno_ws/src/polishingrobot/aubo_cplusplus_control/")
 include_directories(
   include
@@ -142,8 +144,9 @@ include_directories(
   ${AuborobotController_INCLUDE}
 
 )
-link_libraries(${Auboprotobuf_LIBS} ${AuborobotController_LIBS})
+
 link_directories(${AuboRobotSDK_LIBS_DIR} ${AuboLibConfig_LIBS_DIR} ${Aubolog4cplus_LIBS_DIR})
+link_libraries(${Auboprotobuf_LIBS} ${AuborobotController_LIBS})
 
 
 add_executable(aubo_ros_driver_node src/aubo_ros_driver_node.cpp src/aubo_ros_driver.cpp src/util.cpp)

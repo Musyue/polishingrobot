@@ -12,8 +12,8 @@ int main(int argc, char** argv) {
   }
   AuboRosDriver a1rd;
   a1rd.init_aubo_driver();
-  ros::Subscriber feature_sub = n.subscribe ("/aubo_ros_driver/movej", 1, &AuboRosDriver::MoveJ_Callback,&a1rd);
-  ros::Subscriber feature_sub = n.subscribe ("/aubo_ros_driver/movel", 1, &AuboRosDriver::MoveL_Callback,&a1rd);
+  ros::Subscriber movej_sub = n.subscribe ("/aubo_ros_driver/movej", 1, &AuboRosDriver::MoveJ_Callback,&a1rd);
+  ros::Subscriber movel_sub = n.subscribe ("/aubo_ros_driver/movel", 1, &AuboRosDriver::MoveL_Callback,&a1rd);
   ros::Rate r(aubo_10_ros_pub_hz);
   while (ros::ok()) {
     ROS_INFO("Waiting your cmd please publish the [movej,movet,movel]");

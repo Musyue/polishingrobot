@@ -64,8 +64,8 @@ void AuboRosDriver::logout_aubo()
     /** 接口调用: 退出登录　**/
     robotService.robotServiceLogout();
 }
-
-bool AuboRosDriver::aubo_movej(double jointdeg[],float jointacc,float jointvel,float endacc,float endvel,float ,bool gozero)
+bool AuboRosDriver::aubo_movej(double jointdeg[],float acc,float vel,bool gozero)
+// bool AuboRosDriver::aubo_movej(double jointdeg[],float jointacc,float jointvel,float endacc,float endvel,float ,bool gozero)
 {
     
     /** 接口调用: 设置关节型运动的最大加速度 ***/
