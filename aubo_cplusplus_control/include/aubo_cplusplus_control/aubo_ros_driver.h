@@ -20,9 +20,10 @@
 #include <yaml-cpp/yaml.h>
 //regx
 #include <regex>
+#define MAXWAYPOINT 1000
 #define SERVER_HOST "192.168.1.115"
 #define SERVER_PORT 8899
-#define LENARRAY(arr) ((int) (sizeof (arr) / sizeof (arr)[0]))
+
 namespace aubo10_ros_driver {
     struct aubo_movej
     {
@@ -47,10 +48,10 @@ namespace aubo10_ros_driver {
 
             //MOVEJ
             bool aubo_movej_one(double jointdeg[],double parmlist[]);
-            bool aubo_movej_path(double jointdeg[][6],double parmlist[]);
+            bool aubo_movej_path(double jointdeg[][6],double parmlist[],int joint_path_count);
             //movel
-            bool aubo_movel(double jointdeg[][6],double parmlist[]);
-            bool aubo_movet(double jointdeg[][6],double parmlist[]);
+            bool aubo_movel(double jointdeg[][6],double parmlist[],int joint_path_count);
+            bool aubo_movet(double jointdeg[][6],double parmlist[],int joint_path_count);
             //for joint
             void aubo_joint_set_acc(double joint_acc);
             void aubo_joint_set_vel(double joint_vel);
@@ -60,6 +61,7 @@ namespace aubo10_ros_driver {
 
 
             void MoveJ_One_Callback(const std_msgs::String::ConstPtr& msg);
+            void MoveJ_Path_Callback(const std_msgs::String::ConstPtr& msg);
             //MOVEL
             void MoveL_Callback(const std_msgs::String::ConstPtr& msg);
             //MOVET
