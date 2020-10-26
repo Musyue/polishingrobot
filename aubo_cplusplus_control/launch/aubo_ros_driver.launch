@@ -1,8 +1,7 @@
 <launch>
 
-  <node name="aubo_10_polishing_opreating_node" pkg="polishingrobot_onlineplanner" type="aubo_10_polishing_opreating_node" respawn="false" output="screen">
+  <node name="aubo_ros_driver_node" pkg="aubo_cplusplus_control" type="aubo_ros_driver_node" respawn="false" output="screen">
     <param name="/aubo_10_ros_pub_hz" value="1"/>
-
   </node>
 
 </launch>

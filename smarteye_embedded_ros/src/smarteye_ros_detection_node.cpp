@@ -560,14 +560,8 @@ int main(int argc, char **argv)
                 {
                     ROS_INFO("Please Wait the open parameter!\n");
                 }
-                
-
-
-                
-
                 ros::spinOnce();
                 loop_rate.sleep();	
-			    
 			}
             //while (!viewers.wasStopped()) {}	
         }
