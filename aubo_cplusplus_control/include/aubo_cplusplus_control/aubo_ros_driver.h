@@ -18,21 +18,12 @@
 #include "aubo_cplusplus_control/util.h"
 //yaml
 #include <yaml-cpp/yaml.h>
-//boost
-#include <boost/spirit/include/qi.hpp>
-#include <boost/config/warning_disable.hpp>
-#include <boost/spirit/include/qi.hpp>
-#include <boost/spirit/include/phoenix_core.hpp>
-#include <boost/spirit/include/phoenix_operator.hpp>
-#include <boost/spirit/include/phoenix_object.hpp>
-#include <boost/fusion/include/adapt_struct.hpp>
-#include <boost/fusion/include/io.hpp>
-#include <boost/fusion/tuple.hpp>
+//regx
+#include <regex>
 #define SERVER_HOST "192.168.1.115"
 #define SERVER_PORT 8899
+#define LENARRAY(arr) ((int) (sizeof (arr) / sizeof (arr)[0]))
 namespace aubo10_ros_driver {
-    namespace qi = boost::spirit::qi;
-    namespace ascii = boost::spirit::ascii;
     struct aubo_movej
     {
         double joint0;
@@ -53,14 +44,28 @@ namespace aubo10_ros_driver {
             void init_aubo_driver();
             void shutdown_aubo();
             void logout_aubo();
+
             //MOVEJ
-            bool aubo_movej(double jointdeg[],float acc,float vel,bool gozero);
-            void MoveJ_Callback(const std_msgs::String::ConstPtr& msg);
+            bool aubo_movej_one(double jointdeg[],double parmlist[]);
+            bool aubo_movej_path(double jointdeg[][6],double parmlist[]);
+            //movel
+            bool aubo_movel(double jointdeg[][6],double parmlist[]);
+            bool aubo_movet(double jointdeg[][6],double parmlist[]);
+            //for joint
+            void aubo_joint_set_acc(double joint_acc);
+            void aubo_joint_set_vel(double joint_vel);
+            //for end
+            void aubo_end_set_acc(double line_acc,double angle_acc);//line and angle
+            void aubo_end_set_vel(double line_acc,double angle_acc);//line and angle
+
+
+            void MoveJ_One_Callback(const std_msgs::String::ConstPtr& msg);
             //MOVEL
             void MoveL_Callback(const std_msgs::String::ConstPtr& msg);
             //MOVET
 
             void MoveT_Callback(const std_msgs::String::ConstPtr& msg);
+
 
         private:
             //Use for read yaml data
@@ -69,68 +74,6 @@ namespace aubo10_ros_driver {
             int AuboPort;
             ServiceInterface robotService;
             int ret;
-
-            
-
     };
-}
-BOOST_FUSION_ADAPT_STRUCT(
-    aubo10_ros_driver::aubo_movej,
-    (double,joint0)
-    (double, joint1)
-    (double ,joint2)
-    (double ,joint3)
-    (double ,joint4)
-    (double ,joint5)
-    (double ,acc)
-    (double ,vel)
-    (int, gozero)
-)
-
-namespace aubo10_ros_driver
-{
-    template <typename Iterator>
-    struct aubo_movej_parser : qi::grammar<Iterator, aubo_movej(), ascii::space_type>
-    {
-        aubo_movej_parser() : aubo_movej_parser::base_type(start)
-        {
-            using qi::int_;
-            using qi::lit;
-            using qi::double_;
-            using qi::lexeme;
-            using ascii::char_;
-
-            start %=
-                lit("movej")
-                >> '{'
-                >>lit("joint")
-                >>'='
-                >>'('
-                >>  double_ >> ','
-                >>  double_ >> ','
-                >>  double_>> ','
-                >>  double_ >> ','
-                >>  double_ >> ','
-                >>  double_
-                >>')'
-                >>','
-                >>lit("acc")
-                >>'='
-                >>  double_>> ','
-                >>lit("vel")
-                >>'='
-                >>  double_>> ','
-                >>lit("gozero")
-                >>'='
-                >>  int_
-                >>  '}'
-                ;
-        }
-
-        //qi::rule<Iterator, std::string(), ascii::space_type> quoted_string;
-        qi::rule<Iterator, aubo_movej(), ascii::space_type> start;
-    };
-
-
 }
 #endif

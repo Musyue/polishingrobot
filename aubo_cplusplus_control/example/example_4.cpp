@@ -119,7 +119,7 @@ void Example_4::demo()
     double lineMoveMaxVelc;
     lineMoveMaxVelc = 4;   //单位米每秒
     robotService.robotServiceSetGlobalMoveEndMaxLineVelc(lineMoveMaxVelc);
-    robotService.robotServiceGetGlobalMoveEndMaxAngleVelc(lineMoveMaxVelc);
+    robotService.robotServiceGetGlobalMoveEndMaxAngleVelc(lineMoveMaxVelc); 
 
     for(int i=0;i<20;i++)
     {

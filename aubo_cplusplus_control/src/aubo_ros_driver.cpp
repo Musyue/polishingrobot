@@ -1,7 +1,7 @@
 #include "aubo_cplusplus_control/aubo_ros_driver.h"
 
 using aubo10_ros_driver::AuboRosDriver;
-namespace qi = boost::spirit::qi;
+
 AuboRosDriver::AuboRosDriver()
 {
 
@@ -64,61 +64,81 @@ void AuboRosDriver::logout_aubo()
     /** 接口调用: 退出登录　**/
     robotService.robotServiceLogout();
 }
-bool AuboRosDriver::aubo_movej(double jointdeg[],float acc,float vel,bool gozero)
-// bool AuboRosDriver::aubo_movej(double jointdeg[],float jointacc,float jointvel,float endacc,float endvel,float ,bool gozero)
+//for joint
+void AuboRosDriver::aubo_joint_set_acc(double joint_acc)
 {
-    
-    /** 接口调用: 设置关节型运动的最大加速度 ***/
     aubo_robot_namespace::JointVelcAccParam jointMaxAcc;
-    if ( acc < 0.0 || acc > 180.0)
+    jointMaxAcc.jointPara[0] = joint_acc/180.0*M_PI;
+    jointMaxAcc.jointPara[1] = joint_acc/180.0*M_PI;
+    jointMaxAcc.jointPara[2] = joint_acc/180.0*M_PI;
+    jointMaxAcc.jointPara[3] = joint_acc/180.0*M_PI;
+    jointMaxAcc.jointPara[4] = joint_acc/180.0*M_PI;
+    jointMaxAcc.jointPara[5] = joint_acc/180.0*M_PI;   //接口要求单位是弧度
+    robotService.robotServiceSetGlobalMoveJointMaxAcc(jointMaxAcc);
+
+}
+void AuboRosDriver::aubo_joint_set_vel(double joint_vel)
+{
+    aubo_robot_namespace::JointVelcAccParam jointMaxVelc;
+    jointMaxVelc.jointPara[0] = joint_vel/180.0*M_PI;
+    jointMaxVelc.jointPara[1] = joint_vel/180.0*M_PI;
+    jointMaxVelc.jointPara[2] = joint_vel/180.0*M_PI;
+    jointMaxVelc.jointPara[3] = joint_vel/180.0*M_PI;
+    jointMaxVelc.jointPara[4] = joint_vel/180.0*M_PI;
+    jointMaxVelc.jointPara[5] = joint_vel/180.0*M_PI;   //接口要求单位是弧度
+    robotService.robotServiceSetGlobalMoveJointMaxVelc(jointMaxVelc);
+
+
+}
+//for end
+void AuboRosDriver::aubo_end_set_acc(double line_acc,double angle_acc)
+{
+    double endMoveMaxAcc;
+    endMoveMaxAcc = line_acc;   //单位米每秒
+    robotService.robotServiceSetGlobalMoveEndMaxLineAcc(endMoveMaxAcc);
+    robotService.robotServiceSetGlobalMoveEndMaxAngleAcc(angle_acc);
+}//line and angle
+void AuboRosDriver::aubo_end_set_vel(double line_acc,double angle_acc)
+{
+    double endMoveMaxVelc;
+    endMoveMaxVelc = line_acc;   //单位米每秒
+    robotService.robotServiceSetGlobalMoveEndMaxLineVelc(endMoveMaxVelc);
+    robotService.robotServiceSetGlobalMoveEndMaxAngleVelc(angle_acc);
+}//line and angle
+/*
+paramlist :(jointacc,jointvel,type)
+type=0,typeslfag
+type=1,movej
+*/
+bool AuboRosDriver::aubo_movej_one(double jointdeg[],double paramlist[])
+{
+    /** 接口调用: 设置关节型运动的最大加速度 ***/
+    int typeslfag=-1;
+
+    if ( paramlist[0] < 0.0 || paramlist[0] > 180.0)
     {
         ROS_ERROR("Aubo movej joint control acc can not more than 180.0 in degree,we will use default acc=20.0");
-        jointMaxAcc.jointPara[0] = 20.0/180.0*M_PI;
-        jointMaxAcc.jointPara[1] = 20.0/180.0*M_PI;
-        jointMaxAcc.jointPara[2] = 20.0/180.0*M_PI;
-        jointMaxAcc.jointPara[3] = 20.0/180.0*M_PI;
-        jointMaxAcc.jointPara[4] = 20.0/180.0*M_PI;
-        jointMaxAcc.jointPara[5] = 20.0/180.0*M_PI;   //接口要求单位是弧度
-        robotService.robotServiceSetGlobalMoveJointMaxAcc(jointMaxAcc);
+        this->aubo_joint_set_acc(20.0);
     }else
     {
-        jointMaxAcc.jointPara[0] = acc/180.0*M_PI;
-        jointMaxAcc.jointPara[1] = acc/180.0*M_PI;
-        jointMaxAcc.jointPara[2] = acc/180.0*M_PI;
-        jointMaxAcc.jointPara[3] = acc/180.0*M_PI;
-        jointMaxAcc.jointPara[4] = acc/180.0*M_PI;
-        jointMaxAcc.jointPara[5] = acc/180.0*M_PI;   //接口要求单位是弧度
-        robotService.robotServiceSetGlobalMoveJointMaxAcc(jointMaxAcc);
+        this->aubo_joint_set_acc(paramlist[0]);
     }
-    aubo_robot_namespace::JointVelcAccParam jointMaxVelc;
-    if (vel < 0.0 || vel > 180.0)
+    
+    if (paramlist[1] < 0.0 || paramlist[1] > 180.0)
     {
         ROS_ERROR("Aubo movej joint control vel can not more than 180.0 in degree,we will use default acc=20.0");
         /** 接口调用: 设置关节型运动的最大速度 ***/
-        
-        jointMaxVelc.jointPara[0] = 20.0/180.0*M_PI;
-        jointMaxVelc.jointPara[1] = 20.0/180.0*M_PI;
-        jointMaxVelc.jointPara[2] = 20.0/180.0*M_PI;
-        jointMaxVelc.jointPara[3] = 20.0/180.0*M_PI;
-        jointMaxVelc.jointPara[4] = 20.0/180.0*M_PI;
-        jointMaxVelc.jointPara[5] = 20.0/180.0*M_PI;   //接口要求单位是弧度
-        robotService.robotServiceSetGlobalMoveJointMaxVelc(jointMaxVelc);
+        this->aubo_joint_set_vel(20.0);
     }else
     {
-        /** 接口调用: 设置关节型运动的最大速度 ***/
-        jointMaxVelc.jointPara[0] = 50.0/180.0*M_PI;
-        jointMaxVelc.jointPara[1] = 50.0/180.0*M_PI;
-        jointMaxVelc.jointPara[2] = 50.0/180.0*M_PI;
-        jointMaxVelc.jointPara[3] = 50.0/180.0*M_PI;
-        jointMaxVelc.jointPara[4] = 50.0/180.0*M_PI;
-        jointMaxVelc.jointPara[5] = 50.0/180.0*M_PI;   //接口要求单位是弧度
-        robotService.robotServiceSetGlobalMoveJointMaxVelc(jointMaxVelc);
+        this->aubo_joint_set_vel(20.0);
     }
     double jointAngle[aubo_robot_namespace::ARM_DOF] = {0};
-    if(gozero)
+    typeslfag=paramlist[2];
+    // printf("typeslfag--%d---%f\n",typeslfag,paramlist[2]);
+    if(typeslfag==0)
     {
         /** 机械臂运动到零位姿态 **/
-        
         Util::initJointAngleArray(jointAngle, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
         ROS_ERROR("====Aubo will go back to the stand up state=======");
@@ -139,11 +159,72 @@ bool AuboRosDriver::aubo_movej(double jointdeg[],float acc,float vel,bool gozero
             return false;
         }
     }
-
-    sleep(100);
+    usleep(100);
 }
 
-void AuboRosDriver::MoveJ_Callback(const std_msgs::String::ConstPtr& msg)
+/*
+paramlist :(jointacc,jointvel,lineendacc,lineendvel,angleendacc,angleendvel,type,blendradius,circularlooptimes)
+type=0,typeslfag
+type=1,movej
+jointdeg[][6],a path 
+*/
+bool AuboRosDriver::aubo_movej_path(double jointdeg[][6],double paramlist[])
+{
+    /** 接口调用: 设置关节型运动的最大加速度 ***/
+    double typeslfag;
+    if ( paramlist[0] < 0.0 || paramlist[0] > 180.0)
+    {
+        ROS_ERROR("Aubo movej joint control acc can not more than 180.0 in degree,we will use default acc=20.0");
+        this->aubo_joint_set_acc(20.0);
+    }else
+    {
+        this->aubo_joint_set_acc(paramlist[0]);
+    }
+    
+    if (paramlist[1] < 0.0 || paramlist[1] > 180.0)
+    {
+        ROS_ERROR("Aubo movej joint control vel can not more than 180.0 in degree,we will use default acc=20.0");
+        /** 接口调用: 设置关节型运动的最大速度 ***/
+        this->aubo_joint_set_vel(20.0);
+    }else
+    {
+        this->aubo_joint_set_vel(20.0);
+    }
+    double jointAngle[aubo_robot_namespace::ARM_DOF] = {0};
+    typeslfag=paramlist[6];
+    if(typeslfag==0)
+    {
+        /** 机械臂运动到零位姿态 **/
+        Util::initJointAngleArray(jointAngle, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+
+        ROS_ERROR("====Aubo will go back to the stand up state=======");
+        ret = robotService.robotServiceJointMove(jointAngle, true);
+        if(ret != aubo_robot_namespace::InterfaceCallSuccCode)
+        {
+            ROS_ERROR("====Aubo move to (0.0, 0.0, 0.0, 0.0, 0.0, 0.0) fail,Please Check=======");
+            return false;
+        }
+    }else
+    {
+
+        int jointpath_num=LENARRAY(jointdeg);
+        for (int i = 0; i < jointpath_num; i++)
+        {
+            ROS_INFO("====Aubo will move to Path Point[%d] (%f,%f,%f,%f,%f,%f)=======",i,jointdeg[i][0],jointdeg[i][1],jointdeg[i][2],jointdeg[i][3],jointdeg[i][4],jointdeg[i][5]);
+            Util::initJointAngleArray(jointAngle, jointdeg[i][0]/180.0*M_PI,  jointdeg[i][1]/180.0*M_PI,  jointdeg[i][2]/180.0*M_PI, jointdeg[i][3]/180.0*M_PI,jointdeg[i][4]/180.0*M_PI, jointdeg[i][5]/180.0*M_PI);
+            robotService.robotServiceJointMove(jointAngle, true);
+            if(ret != aubo_robot_namespace::InterfaceCallSuccCode)
+            {
+                ROS_ERROR("====Aubo move to (%f,%f,%f,%f,%f,%f) fail,Please Check=======",jointdeg[i][0],jointdeg[i][1],jointdeg[i][2],jointdeg[i][3],jointdeg[i][4],jointdeg[i][5]);
+                return false;
+            }
+            usleep(100);
+        }
+    }
+    
+}
+
+void AuboRosDriver::MoveJ_One_Callback(const std_msgs::String::ConstPtr& msg)
  {
     ROS_INFO("GOT A Control CMD: [%s]", msg->data.c_str());
     std::string recv_str=msg->data.c_str();
@@ -151,123 +232,280 @@ void AuboRosDriver::MoveJ_Callback(const std_msgs::String::ConstPtr& msg)
     std::string::size_type idx;
     idx=recv_str.find(movej_str);
     double jointdeg[6];
-    float acc,vel;
-    int gozero;
+    double string2double_array[100];
     if(idx==std::string::npos)
     {
-        ROS_ERROR("Please publish the Right movej,Command Like this movej{joint=(0,0,0,0,0,0),acc=0.0,vel=0.0,gozero=0}");
+        ROS_ERROR("Please publish the Right movej,Command Like this movej{joint=[(0,0,0,0,0,0)],paramlist=(jointacc,jointvel,jointveltype)}");
+        // ROS_ERROR("Please publish the Right movej,Command Like this movej{joint=[(0,0,0,0,0,0)],paramlist=(jointacc,jointvel,lineendacc,lineendvel,angleendacc,angleendvel,type,blendradius,circularlooptimes)}");
     }
     else
     {
         ROS_INFO("We will move to [%s]",msg->data.c_str());
-        using boost::spirit::ascii::space;
-        typedef std::string::const_iterator iterator_type;
-        typedef aubo10_ros_driver::aubo_movej_parser<iterator_type> aubo_movej_parser;
-        aubo_movej_parser g; // Our grammar
-        std::string str;
-        str=msg->data.c_str();
-        aubo10_ros_driver::aubo_movej aubomovej;
-        std::string::const_iterator iter = str.begin();
-        std::string::const_iterator end = str.end();
-        bool r = phrase_parse(iter, end, g, space, aubomovej);
-
-        if (r && iter == end)
+        std::regex reg("-?(([0-9]\\d*\\.\\d*)|(0\\.\\d*[0-9]\\d*))");
+        std::string strTemp = msg->data.c_str();
+        const std::sregex_iterator end;
+        int count_double=0;
+        for (std::sregex_iterator iter(std::cbegin(strTemp), std::cend(strTemp), reg); iter != end;++iter)
         {
-            std::cout << boost::fusion::tuple_open('[');
-            std::cout << boost::fusion::tuple_close(']');
-            std::cout << boost::fusion::tuple_delimiter(", ");
-
-            std::cout << "-------------------------\n";
-            std::cout << "parser got data: " << boost::fusion::as_vector(aubomovej) << std::endl;
-
-            // std::cout<<aubomovej.joint0<<std::endl;
-            jointdeg[0]=aubomovej.joint0;
-            jointdeg[1]=aubomovej.joint1;
-            jointdeg[2]=aubomovej.joint2;
-            jointdeg[3]=aubomovej.joint3;
-            jointdeg[4]=aubomovej.joint4;
-            jointdeg[5]=aubomovej.joint5;
-
-            acc=aubomovej.acc;
-            vel=aubomovej.vel;
-            gozero=aubomovej.gozero;
-            this->aubo_movej(jointdeg,acc,vel,gozero);
-            // std::cout << typeid(aubomovej.joint0).name() << std::endl;
-            // std::cout << typeid(aubomovej.gozero).name() << std::endl;
-
-            std::cout << "\n-------------------------\n";
+            // std::cout << atof(iter->str().c_str()) << std::endl;
+            if(count_double<6)
+            {
+                jointdeg[count_double]=atof(iter->str().c_str());
+            }else
+            {
+                // printf("count_double%d",count_double);
+                string2double_array[count_double-6]=atof(iter->str().c_str());
+            }
+            count_double++;
         }
-        else
+        double paramlist[3];
+        for (int i = 0; i < 3; i++)
         {
-            std::cout << "-------------------------\n";
-            std::cout << "Parsing failed\n";
-            std::cout << "-------------------------\n";
+            paramlist[i]=string2double_array[i];
         }
+        this->aubo_movej_one(jointdeg,paramlist);
+        
+
     }
+    
     
 
  }
-void AuboRosDriver::MoveL_Callback(const std_msgs::String::ConstPtr& msg)
+
+/*
+paramlist :(jointacc,jointvel,lineendacc,lineendvel,angleendacc,angleendvel,type,blendradius,circularlooptimes)
+type=0,typeslfag
+type=1,movel
+*/
+bool AuboRosDriver::aubo_movel(double jointdeg[][6],double paramlist[])
 {
-    ROS_INFO("GOT A Control CMD: [%s]", msg->data.c_str());
-    std::string recv_str=msg->data.c_str();
-    std::string movej_str="movel";
-    std::string::size_type idx;
-    idx=recv_str.find(movej_str);
-    double jointdeg[6];
-    float acc,vel;
-    int gozero;
-    if(idx==std::string::npos)
+    /** 接口调用: 设置关节型运动的最大加速度 ***/
+    double typeslfag;
+    if ( paramlist[0] < 0.0 || paramlist[0] > 180.0)
     {
-        ROS_ERROR("Please publish the Right movel,Command Like this movel{joint=(0,0,0,0,0,0),acc=0.0,vel=0.0,gozero=0}");
+        ROS_ERROR("Aubo movel joint control acc can not more than 180.0 in degree,we will use default acc=20.0");
+        this->aubo_joint_set_acc(20.0);
+    }else
+    {
+        this->aubo_joint_set_acc(paramlist[0]);
     }
-    else
+    
+    if (paramlist[1] < 0.0 || paramlist[1] > 180.0)
     {
-        ROS_INFO("We will move to [%s]",msg->data.c_str());
-        using boost::spirit::ascii::space;
-        typedef std::string::const_iterator iterator_type;
-        typedef aubo10_ros_driver::aubo_movej_parser<iterator_type> aubo_movej_parser;
-        aubo_movej_parser g; // Our grammar
-        std::string str;
-        str=msg->data.c_str();
-        aubo10_ros_driver::aubo_movej aubomovej;
-        std::string::const_iterator iter = str.begin();
-        std::string::const_iterator end = str.end();
-        bool r = phrase_parse(iter, end, g, space, aubomovej);
+        ROS_ERROR("Aubo movel joint control vel can not more than 180.0 in degree,we will use default acc=20.0");
+        /** 接口调用: 设置关节型运动的最大速度 ***/
+        this->aubo_joint_set_vel(20.0);
+    }else
+    {
+        this->aubo_joint_set_vel(20.0);
+    }
+    double jointAngle[aubo_robot_namespace::ARM_DOF] = {0};
+    typeslfag=paramlist[6];
+    if(typeslfag==0)
+    {
+        /** 机械臂运动到零位姿态 **/
+        Util::initJointAngleArray(jointAngle, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
-        if (r && iter == end)
+        ROS_ERROR("====Aubo will go back to the stand up state=======");
+        ret = robotService.robotServiceJointMove(jointAngle, true);
+        if(ret != aubo_robot_namespace::InterfaceCallSuccCode)
         {
-            std::cout << boost::fusion::tuple_open('[');
-            std::cout << boost::fusion::tuple_close(']');
-            std::cout << boost::fusion::tuple_delimiter(", ");
-
-            std::cout << "-------------------------\n";
-            std::cout << "parser got data: " << boost::fusion::as_vector(aubomovej) << std::endl;
-
-            // std::cout<<aubomovej.joint0<<std::endl;
-            jointdeg[0]=aubomovej.joint0;
-            jointdeg[1]=aubomovej.joint1;
-            jointdeg[2]=aubomovej.joint2;
-            jointdeg[3]=aubomovej.joint3;
-            jointdeg[4]=aubomovej.joint4;
-            jointdeg[5]=aubomovej.joint5;
-
-            acc=aubomovej.acc;
-            vel=aubomovej.vel;
-            gozero=aubomovej.gozero;
-            this->aubo_movej(jointdeg,acc,vel,gozero);
-            // std::cout << typeid(aubomovej.joint0).name() << std::endl;
-            // std::cout << typeid(aubomovej.gozero).name() << std::endl;
-
-            std::cout << "\n-------------------------\n";
+            ROS_ERROR("====Aubo move to (0.0, 0.0, 0.0, 0.0, 0.0, 0.0) fail,Please Check=======");
+            return false;
         }
-        else
+    }else
+    {
+        ROS_INFO("====Aubo will start to move line =======");
+        ROS_INFO("====First :---> Aubo will move to (%f,%f,%f,%f,%f,%f)=======",jointdeg[0][0],jointdeg[0][1],jointdeg[0][2],jointdeg[0][3],jointdeg[0][4],jointdeg[0][5]);
+        Util::initJointAngleArray(jointAngle, jointdeg[0][0]/180.0*M_PI,  jointdeg[0][1]/180.0*M_PI,  jointdeg[0][2]/180.0*M_PI, jointdeg[0][3]/180.0*M_PI,jointdeg[0][4]/180.0*M_PI, jointdeg[0][5]/180.0*M_PI);
+        robotService.robotServiceJointMove(jointAngle, true);
+        if(ret != aubo_robot_namespace::InterfaceCallSuccCode)
         {
-            std::cout << "-------------------------\n";
-            std::cout << "Parsing failed\n";
-            std::cout << "-------------------------\n";
+            ROS_ERROR("====Aubo move to (%f,%f,%f,%f,%f,%f) fail,Please Check=======",jointdeg[0][0],jointdeg[0][1],jointdeg[0][2],jointdeg[0][3],jointdeg[0][4],jointdeg[0][5]);
+            return false;
+        }
+        robotService.robotServiceInitGlobalMoveProfile();
+        if((paramlist[2]<0.0 || paramlist[2]>3.0 ) || (paramlist[4]<0.0 || paramlist[4]>180.0 ))
+        {
+            ROS_ERROR("Aubo movel endeffector line and angle acc can not more than 3.0 and 180,we will use default lineacc=1.0,angleacc=1.0");
+            this->aubo_end_set_acc(1.0,1.0);
+        }else{
+            this->aubo_end_set_acc(paramlist[2],paramlist[4]);
+        }
+        if((paramlist[3]<0.0 || paramlist[3]>3.0 ) || (paramlist[5]<0.0 || paramlist[5]>180.0 ))
+        {
+            ROS_ERROR("Aubo movel endeffector line and angle vel can not more than 3.0 and 180,we will use default linevel=1.0,anglevel=1.0");
+            this->aubo_end_set_vel(1.0,1.0);
+        }else{
+            this->aubo_end_set_vel(paramlist[3],paramlist[5]);
+        }
+
+        int jointpath_num=LENARRAY(jointdeg);
+        for (int i = 0; i < jointpath_num; i++)
+        {
+            ROS_INFO("====Aubo will move to Path Point[%d] (%f,%f,%f,%f,%f,%f)=======",i,jointdeg[i][0],jointdeg[i][1],jointdeg[i][2],jointdeg[i][3],jointdeg[i][4],jointdeg[i][5]);
+            Util::initJointAngleArray(jointAngle, jointdeg[i][0]/180.0*M_PI,  jointdeg[i][1]/180.0*M_PI,  jointdeg[i][2]/180.0*M_PI, jointdeg[i][3]/180.0*M_PI,jointdeg[i][4]/180.0*M_PI, jointdeg[i][5]/180.0*M_PI);
+            robotService.robotServiceLineMove(jointAngle, true);
+            if(ret != aubo_robot_namespace::InterfaceCallSuccCode)
+            {
+                ROS_ERROR("====Aubo move to (%f,%f,%f,%f,%f,%f) fail,Please Check=======",jointdeg[i][0],jointdeg[i][1],jointdeg[i][2],jointdeg[i][3],jointdeg[i][4],jointdeg[i][5]);
+                return false;
+            }
+            usleep(100);
         }
     }
     
+}
+/*
+                0       1       2           3           4           5       6       7               8
+paramlist :(jointacc,jointvel,lineendacc,lineendvel,angleendacc,angleendvel,type,blendradius,circularlooptimes)
+type=0,typeslfag
+type=1,ARC_CIR
+type=2,CARTESIAN_MOVEP
+type=3,CARTESIAN_CUBICSPLINE
+type=4,CARTESIAN_UBSPLINEINTP
+type=5,JIONT_CUBICSPLINE
+type=6,JOINT_UBSPLINEINTP
+1 、subMoveMode 当 subMoveMode==ARC_CIR, CARTESIAN_MOVEP, CARTESIAN_CUBICSPLINE,
+CARTESIAN_UBSPLINEINTP 时，该运动属于末端型运动；
+当 subMoveMode==JIONT_CUBICSPLINE, JOINT_UBSPLINEINTP 时，该运动属于关节型运动；
+当 subMoveMode==ARC_CIR 表示圆或者圆弧
+当圆的圈数属性（ CircularLoopTimes）为 0 时，表示圆弧轨迹，
+当圆的圈数属性（ CircularLoopTimes）大于 0 时，表示圆轨迹。
+当 subMoveMode==CARTESIAN_MOVEP 表示 MOVEP 轨迹，需要用户这只交融半径的属性。
+*/
+bool AuboRosDriver::aubo_movet(double jointdeg[][6],double paramlist[])
+{
+    /** 接口调用: 设置关节型运动的最大加速度 ***/
+    double typeslfag;
+    if ( paramlist[0] < 0.0 || paramlist[0] > 180.0)
+    {
+        ROS_ERROR("Aubo movel joint control acc can not more than 180.0 in degree,we will use default acc=20.0");
+        this->aubo_joint_set_acc(20.0);
+    }else
+    {
+        this->aubo_joint_set_acc(paramlist[0]);
+    }
+    
+    if (paramlist[1] < 0.0 || paramlist[1] > 180.0)
+    {
+        ROS_ERROR("Aubo movel joint control vel can not more than 180.0 in degree,we will use default acc=20.0");
+        /** 接口调用: 设置关节型运动的最大速度 ***/
+        this->aubo_joint_set_vel(20.0);
+    }else
+    {
+        this->aubo_joint_set_vel(20.0);
+    }
+    double jointAngle[aubo_robot_namespace::ARM_DOF] = {0};
+    typeslfag=paramlist[6];
+    if(typeslfag==0)
+    {
+        /** 机械臂运动到零位姿态 **/
+        Util::initJointAngleArray(jointAngle, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
 
+        ROS_ERROR("====Aubo will go back to the stand up state=======");
+        ret = robotService.robotServiceJointMove(jointAngle, true);
+        if(ret != aubo_robot_namespace::InterfaceCallSuccCode)
+        {
+            ROS_ERROR("====Aubo move to (0.0, 0.0, 0.0, 0.0, 0.0, 0.0) fail,Please Check=======");
+            return false;
+        }
+    }else
+    {
+        ROS_INFO("====Aubo will start to move line =======");
+        ROS_INFO("====First :---> Aubo will move to (%f,%f,%f,%f,%f,%f)=======",jointdeg[0][0],jointdeg[0][1],jointdeg[0][2],jointdeg[0][3],jointdeg[0][4],jointdeg[0][5]);
+        Util::initJointAngleArray(jointAngle, jointdeg[0][0]/180.0*M_PI,  jointdeg[0][1]/180.0*M_PI,  jointdeg[0][2]/180.0*M_PI, jointdeg[0][3]/180.0*M_PI,jointdeg[0][4]/180.0*M_PI, jointdeg[0][5]/180.0*M_PI);
+        robotService.robotServiceJointMove(jointAngle, true);
+        if(ret != aubo_robot_namespace::InterfaceCallSuccCode)
+        {
+            ROS_ERROR("====Aubo move to (%f,%f,%f,%f,%f,%f) fail,Please Check=======",jointdeg[0][0],jointdeg[0][1],jointdeg[0][2],jointdeg[0][3],jointdeg[0][4],jointdeg[0][5]);
+            return false;
+        }
+        robotService.robotServiceInitGlobalMoveProfile();
+        if((paramlist[2]<0.0 || paramlist[2]>3.0 ) || (paramlist[4]<0.0 || paramlist[4]>180.0 ))
+        {
+            ROS_ERROR("Aubo movel endeffector line and angle acc can not more than 3.0 and 180,we will use default lineacc=1.0,angleacc=1.0");
+            this->aubo_end_set_acc(1.0,1.0);
+        }else{
+            this->aubo_end_set_acc(paramlist[2],paramlist[4]);
+        }
+        if((paramlist[3]<0.0 || paramlist[3]>3.0 ) || (paramlist[5]<0.0 || paramlist[5]>180.0 ))
+        {
+            ROS_ERROR("Aubo movel endeffector line and angle vel can not more than 3.0 and 180,we will use default linevel=1.0,anglevel=1.0");
+            this->aubo_end_set_vel(1.0,1.0);
+        }else{
+            this->aubo_end_set_vel(paramlist[3],paramlist[5]);
+        }
+
+        int jointpath_num=LENARRAY(jointdeg);
+        for (int i = 0; i < jointpath_num; i++)
+        {
+            ROS_INFO("====Aubo will add to Path Point[%d] (%f,%f,%f,%f,%f,%f)=======",i,jointdeg[i][0],jointdeg[i][1],jointdeg[i][2],jointdeg[i][3],jointdeg[i][4],jointdeg[i][5]);
+            Util::initJointAngleArray(jointAngle, jointdeg[i][0]/180.0*M_PI,  jointdeg[i][1]/180.0*M_PI,  jointdeg[i][2]/180.0*M_PI, jointdeg[i][3]/180.0*M_PI,jointdeg[i][4]/180.0*M_PI, jointdeg[i][5]/180.0*M_PI);
+            robotService.robotServiceAddGlobalWayPoint(jointAngle);
+        }
+        if(typeslfag==1)
+        {   
+            ROS_INFO("===Aubo will run with circular path=========");
+            robotService.robotServiceSetGlobalCircularLoopTimes(paramlist[8]);
+            ret = robotService.robotServiceTrackMove(aubo_robot_namespace::ARC_CIR, true);
+
+            if(ret != aubo_robot_namespace::InterfaceCallSuccCode)
+            {
+                ROS_ERROR("=====TrackMove failed.　=======Please check====");
+            }
+        }else if(typeslfag==2){
+            ROS_INFO("===Aubo will run with CARTESIAN_MOVEP path=========");
+            robotService.robotServiceSetGlobalBlendRadius(paramlist[7]);
+            ret = robotService.robotServiceTrackMove(aubo_robot_namespace::CARTESIAN_MOVEP, true);
+
+            if(ret != aubo_robot_namespace::InterfaceCallSuccCode)
+            {
+                ROS_ERROR("=====TrackMove failed.　=======Please check====");
+            }
+        }else if(typeslfag==3)
+        {
+            ROS_INFO("===Aubo will run with CARTESIAN_CUBICSPLINE path=========");
+            robotService.robotServiceSetGlobalBlendRadius(paramlist[7]);
+            ret = robotService.robotServiceTrackMove(aubo_robot_namespace::CARTESIAN_CUBICSPLINE, true);
+
+            if(ret != aubo_robot_namespace::InterfaceCallSuccCode)
+            {
+                ROS_ERROR("=====TrackMove failed.　=======Please check====");
+            }
+
+        }else if(typeslfag==4)
+        {
+            ROS_INFO("===Aubo will run with CARTESIAN_UBSPLINEINTP path=========");
+            robotService.robotServiceSetGlobalBlendRadius(paramlist[7]);
+            ret = robotService.robotServiceTrackMove(aubo_robot_namespace::CARTESIAN_UBSPLINEINTP, true);
+            if(ret != aubo_robot_namespace::InterfaceCallSuccCode)
+            {
+                ROS_ERROR("=====TrackMove failed.　=======Please check====");
+            }
+
+        }else if(typeslfag==5)
+        {
+            ROS_INFO("===Aubo will run with JIONT_CUBICSPLINE path=========");
+            ret = robotService.robotServiceTrackMove(aubo_robot_namespace::JIONT_CUBICSPLINE, true);
+            if(ret != aubo_robot_namespace::InterfaceCallSuccCode)
+            {
+                ROS_ERROR("=====TrackMove failed.　=======Please check====");
+            }
+
+        }else if(typeslfag==6)
+        {
+            ROS_INFO("===Aubo will run with JOINT_UBSPLINEINTP path=========");
+            ret = robotService.robotServiceTrackMove(aubo_robot_namespace::JOINT_UBSPLINEINTP, true);
+            if(ret != aubo_robot_namespace::InterfaceCallSuccCode)
+            {
+                ROS_ERROR("=====TrackMove failed.　=======Please check====");
+            }
+        }
+        else
+        {
+
+        }
+    }
+    
 }

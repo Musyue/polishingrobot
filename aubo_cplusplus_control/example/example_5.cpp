@@ -195,7 +195,7 @@ void Example_5::demo()
         robotService.robotServiceAddGlobalWayPoint(jointAngle);
         Util::initJointAngleArray(jointAngle,0.100000, -0.147267, -1.321122, 0.376934, -1.570794, -0.000008);
         robotService.robotServiceAddGlobalWayPoint(jointAngle);
-        Util::initJointAngleArray(jointAngle,0.200000, -0.167267, -1.321122, 0.376934, -1.570796, -0.000008);
+        Util::initJointAngleArray(jointAngle,0.200000, -0.167267, f-1.321122, 0.376934, -1.570796, -0.000008);
         robotService.robotServiceAddGlobalWayPoint(jointAngle);
 
 //        robotService.robotServiceSetGlobalBlendRadius(0.03);                     //交融半径
